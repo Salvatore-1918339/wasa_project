@@ -261,6 +261,7 @@ components:
       type: object
       properties:
         username:
+          description: Stringa di User_nickname
           type: string
           minLength: 5
           maxLength: 25
@@ -277,8 +278,8 @@ components:
         id_code: 
           description: Stringa identificativa della photo
           type: string
-          minimum: 4
-          maximum: 16
+          minLength: 4
+          maxLength: 16
           pattern: '^.*?$'
           readOnly: true
           example: 'b7q&bd62j'
@@ -294,8 +295,8 @@ components:
         id_code:
           description: Stringa identificativa del commento
           type: string
-          minimum: 4
-          maximum: 16
+          minLength: 4
+          maxLength: 16
           pattern: '^.*?$'
           readOnly: true
           example: 'd2iy39$!'
@@ -308,9 +309,11 @@ components:
       type: object
       properties:
         #Il nome utente dell'utente è anche il suo id. essendo univoco nel mio universo
-        user_id:       
-          $ref: '#/components/schemas/User_nickname' 
-        nickname:             
+        user_id:
+          description: Questo oggetto rappresenta l'username dell'Utente
+          type: object
+          $ref: '#/components/schemas/User_nickname/properties/username' 
+        nickname:    
           $ref: '#/components/schemas/User_nickname'
       example:
         user_id: 'aK3$ga12'
@@ -347,7 +350,10 @@ components:
       type: object
       properties:
         comment_string:
-          maximum: 300
+          description: Stringa del commento
+          type: string
+          minLength: 1
+          maxLength: 300
           example: "Meravigliosa questa foto! InstaLovva!"
         comment_owner:
           $ref: '#/components/schemas/User'
@@ -361,6 +367,7 @@ components:
       type: object
       properties:
         image_code:
+          description: Codice binario che rappresenta il codice dell'immagine
           type: string
           format: binary
           example: '01000111101011010010' #RAPPRESENTAZIONE DI UN IMMAGINE IN BINARIO
@@ -371,10 +378,13 @@ components:
       type: object
       properties:
         photo_id:
+          description: Identificativo della Photo
           $ref: '#/components/schemas/Photo_id'
         owner:
+          description: Proprietario della foto
           $ref: '#/components/schemas/User'
         Timestamp:
+          description: Timestamp a Stringa della pubblicazione della foto
           $ref: '#/components/schemas/Timestamp'
         comment:
           description: Array di Commenti sotto la foto 
@@ -392,6 +402,7 @@ components:
           items:
             $ref: '#/components/schemas/User'
         image_photo:
+          description: Immagine della foto
           $ref: '#/components/schemas/Image'
       example:
         photo_id: 'b7q&bd62j'
@@ -457,7 +468,9 @@ components:
       type: object
       properties:
         user_id:
-          $ref: '#/components/schemas/User_nickname'
+          description: Questo oggetto rappresenta l'username dell'Utente
+          type: object
+          $ref: '#/components/schemas/User_nickname/properties/username'
         user_nickname:
           $ref: '#/components/schemas/User_nickname'
         followers:
@@ -528,6 +541,7 @@ paths:
               type: object
               properties:
                 name:
+                  description: Nome del Post
                   type: string
                   example: Maria
                   pattern: '^.*?$'
@@ -543,6 +557,7 @@ paths:
                 type: object
                 properties:
                   identifier:
+                    description: Identificativo di ritorno
                     # change here if you decide to use an integer
                     # or any other type of identifier
                     type: string
@@ -565,6 +580,7 @@ paths:
       tags:
         - user
       summary: Ricerca dell'utente attraverso le query
+      description: Metodo per ottenere l'utente
       operationId: getUserProfile
 
       parameters:
@@ -588,6 +604,7 @@ paths:
       tags:
         - user
       summary: Creo un nuovo utente
+      description: Creo un nuovo utente con il post
       operationId: createUser
 
       requestBody:
@@ -624,6 +641,7 @@ paths:
       tags:
         - user
       summary: Cambiamo il nickname dell'utente
+      description: Cambio il nickname dell'utente con put
       operationId: setMyUserName
 
       requestBody:
@@ -667,6 +685,7 @@ paths:
       tags:
         - stream
       summary: Ottiene lo Stream di foto dell'Utente 
+      description: Ottengo lo stream di foto dell'utente con metodo get
       operationId: getMyStream
 
       responses:
@@ -702,6 +721,7 @@ paths:
       tags:
         - follower
       summary: Segui un Utente follower_id
+      description: Seguo un Utente follower_id con il metodo put
       operationId: followUser
 
       responses:
@@ -722,6 +742,7 @@ paths:
       tags:
         - follower
       summary: togli il follow all'utente follower_id
+      description: tolgo il follow all'utente follower_id usando il metodo delete
       operationId: unfollowUser
 
       responses:
@@ -758,6 +779,7 @@ paths:
       tags:
         - ban
       summary: Banniamo l'utente
+      description: Banno l'utente con il metodo put
       operationId: banUser
 
       responses:
@@ -779,6 +801,7 @@ paths:
       tags:
         - ban
       summary: Unbanniamo l'utente
+      description: Unbanno l'utente con il metodo delete
       operationId: unbanUser
 
       responses:
@@ -813,6 +836,7 @@ paths:
       tags:
         - photo
       summary: L'utente carica una foto
+      description: L'utente carica una foto attraverso  il metodo post
       operationId: uploadPhoto
 
       requestBody:
@@ -850,6 +874,7 @@ paths:
       tags:
         - photo
       summary: Otteniamo la foto
+      description: Ottengo la foto attraverso il metodo get
       operationId: getPhoto
 
       responses:
@@ -869,6 +894,7 @@ paths:
       tags:
         - photo
       summary: Eliminiamo la foto Photo_id
+      description: Elimino la foto Photo_id attraverso il metodo delete
       operationId: deletePhoto
       
       responses:
@@ -904,6 +930,7 @@ paths:
       tags:
         - comments
       summary: Commentiamo la Photo
+      description: Commeniamo la photo usando il metodo post
       operationId: commentPhoto
 
       requestBody:
@@ -950,6 +977,7 @@ paths:
       tags:
         - comments
       summary: Eliminiamo il commento 
+      description: Elimino il commento usando il metodo delete
       operationId: uncommentPhoto
 
       responses:
@@ -991,6 +1019,7 @@ paths:
       tags:
         - like
       summary: Postiamo un Like ad una foto
+      description: Posto un like ad una foto usando il metodo post
       operationId: likePhoto
 
       requestBody:
@@ -1019,6 +1048,7 @@ paths:
       tags:
         - like
       summary: Togliamo il like dalla photo
+      description: Tolgo il like dalla photo usando il metodo delete
       operationId: unlikePhoto
 
       responses:
