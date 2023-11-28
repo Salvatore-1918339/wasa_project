@@ -378,8 +378,9 @@ components:
       type: object
       properties:
         photo_id:
-          description: Identificativo della Photo
-          $ref: '#/components/schemas/Photo_id'
+          description: Questo oggetto rappresenta photo_id
+          type: object
+          $ref: '#/components/schemas/Photo_id/properties/id_code'
         owner:
           description: Proprietario della foto
           $ref: '#/components/schemas/User'
