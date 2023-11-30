@@ -1,0 +1,1072 @@
+#################################################
+#
+# 
+#
+#
+#################################################
+openapi: 3.0.0
+info:
+  title: Simplified login API specification
+  description: This OpenAPI document describes the simplified login API. Copy and paste the API from the `paths` key to your OpenAPI document.
+  version: 0.0.1
+  contact:
+    name: Vincenzo Salvatore
+    email: salvatore.1918339@studenti.uniroma1.it
+
+tags:
+  - name: login
+    description: Endpoint per la gestione del login
+  - name: user
+    description: Endpoint per la gestione del User
+  - name: stream
+    description: Endpoint per la gestione dello stream dell'User
+  - name: follower
+    description: Endpoint per la gestione dei follower
+  - name: ban
+    description: Endpoint per la gestione degli User bannati
+  - name: photo
+    description: Endpoint per la gestione delle photo
+  - name: comments
+    description: Endpoint per la gestione dei commenti
+  - name: like
+    description: Endpoint per la gestione dei like
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+components:
+  #QUI ANDRÒ AD INSERIRE LE RESPONSE TOTALI CHE POSSO AVERE COSÌ DA RIUTILIZZARE IL CODICE
+  responses: 
+
+    profile_found:
+      description: Utente trovato
+      content:
+        applicarion/json:
+          schema: 
+            $ref: '#/components/schemas/Profile'
+    
+    user_created:
+      description: Utente Creato correttamente
+      content:
+        applicarion/json:
+          schema: 
+            $ref: '#/components/schemas/User'
+
+    stream_response:
+      description: Questo responses contiene la lista di foto dello stream dell'utente
+      content:
+        applicarion/json:
+          schema:
+            $ref: '#/components/schemas/Photos'
+
+    image_uploaded:
+      description: La photo è stata caricata correttamente
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Photo"
+    
+    comment_added:
+      description: Il commento è stato aggiunto correttamente
+      content:
+        applicarion/json:
+          schema: 
+            $ref: '#/components/schemas/Comment'
+
+    like_added:
+      description: Il Like è stato aggiunto
+      content:
+        applicarion/json:
+          schema: 
+            $ref: '#/components/schemas/User_nickname'
+
+    photo:
+      description: informazioni binarie della foto
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Photo"
+
+    ################ - NEUTRALI
+    forbidden:
+      description: risposta 403 - Operazione Proibita
+
+    unauthorized:
+      description: Risposta 401 (Unauthorized)
+
+    no_content:
+      description: Risposta 204 (Processato correttamente e non ritorna niente)
+
+    not_found:
+      description: Risorsa non trovata
+
+    Unexpected_condition:
+      description: unknown server error 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  parameters:
+    #LA MAGGIOR PARTE DEGLI ID SONO I NOMI NICKNAME STESSI DEGLI UTENTI. PRENDENDO COME ESEMPIO INSTAGRAM
+    #ID_UTENTE
+    user_id:
+      name: id
+      in: path
+      description: id dell'utente
+      required: true
+      schema:
+        $ref: '#/components/schemas/User_nickname'
+
+    #ID_FOLLOWER
+    follower_id:
+      name: follower_id
+      in: path
+      description: id di un follower
+      required: true
+      schema: 
+        $ref: '#/components/schemas/User_nickname/properties/username' 
+      example: "_Hashtag_Vinz_"
+    
+    #BANNED_USERS_ID
+    banned_user_id:
+      name: banned_user_id
+      in: path
+      description: id di un utente User bannato
+      required: true
+      schema: 
+        $ref: '#/components/schemas/User_nickname/properties/username'
+      example: "_Hashtag_Vinz_"
+
+    #PHOTO_ID
+    photo_id: 
+      name: photo_id
+      in: path
+      description: id di una photo 
+      required: true
+      schema: 
+        description: Intero compreso tra 0 e 9999
+        type: integer
+        minimum: 0
+        maximum: 9999
+        example : 125
+        readOnly: true
+
+    #COMMENT_ID
+    comment_id:
+      name: comment_id
+      in: path
+      description: id di un commento
+      required: true
+      schema:
+        $ref: "#/components/schemas/Comment_id/properties/id_code"
+      example: 'd2iy39$!'
+
+    #LIKE_ID
+    like_id:
+      name: like_id
+      in: path
+      description: id di un Like
+      required: true
+      schema: 
+        $ref: '#/components/schemas/User_nickname/properties/username'
+      example: "_Hashtag_Vinz_"
+
+    #ID_UTENTE_QUERY
+    user_query_id:
+      name: user_query_id
+      in: query
+      description: id del'User ma dato dall'utente
+      schema: 
+        $ref: '#/components/schemas/User_nickname/properties/username'
+      example: "_Hashtag_Vinz_"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+
+
+
+
+
+
+
+  schemas:
+
+    User_nickname:
+      description: Questo oggetto rappresenta l'username dell'Utente
+      type: object
+      properties:
+        username:
+          description: Stringa di User_nickname
+          type: string
+          minLength: 5
+          maxLength: 25
+          pattern: '^.*?$'
+          example: '_Hashtag_Viinz_'
+          readOnly: true
+      example:
+        username: '_Hashtag_Viinz_'
+    
+    Photo_id:
+      description: Questo oggetto rappresenta l'ID Univoco delle photo
+      type: object
+      properties:
+        id_code: 
+          description: Stringa identificativa della photo
+          type: string
+          minLength: 4
+          maxLength: 16
+          pattern: '^.*?$'
+          readOnly: true
+          example: 'b7q&bd62j'
+      example: 
+        id_code: 'b7q&bd62j'
+      
+    
+
+    Comment_id:
+      description:  Questo oggetto rappresenta l'ID di un commento 
+      type: object
+      properties:
+        id_code:
+          description: Stringa identificativa del commento
+          type: string
+          minLength: 4
+          maxLength: 16
+          pattern: '^.*?$'
+          readOnly: true
+          example: 'd2iy39$!'
+      example:
+        id_code: 'd2iy39$!'
+
+
+    User:
+      description: Questo oggetto rappresenta un Utente nel mondo che stiamo andando a Creare.
+      type: object
+      properties:
+        #Il nome utente dell'utente è anche il suo id. essendo univoco nel mio universo
+        user_id:
+          $ref: '#/components/schemas/User_nickname' 
+        nickname:    
+          $ref: '#/components/schemas/User_nickname'
+      example:
+        user_id: 'aK3$ga12'
+        username: '_Hashtag_Viinz_'
+
+
+    Timestamp:
+      description: Rappresentazione Data-Ora nel seguente formato "gg/mm/aa"-"oo-mm-ss"
+      type: string
+      format: date-time
+      example: "2023-11-02T14:30:00Z"
+    
+
+    Comment:
+      description: Rappresentazione di un commento del nostro universo
+      type: object
+      properties:
+        comment_string:
+          description: Stringa del commento
+          type: string
+          pattern: '^.*?$'
+          minLength: 1
+          maxLength: 300
+          example: "Meravigliosa questa foto! InstaLovva!"
+        comment_owner:
+          $ref: '#/components/schemas/User'
+        comment_timespamp:
+          $ref: '#/components/schemas/Timestamp'
+        comment_identifier:
+          $ref: '#/components/schemas/Comment_id'
+
+    Image:
+      description: Oggetto che rappresenta un'immagine
+      type: object
+      properties:
+        image_code:
+          description: Codice binario che rappresenta il codice dell'immagine
+          type: string
+          minLength: 0
+          maxLength: 1000000
+          format: binary
+          example: '01000111101011010010' #RAPPRESENTAZIONE DI UN IMMAGINE IN BINARIO
+
+
+    Photo:
+      description: Questo oggetto rappresenta la foto di un Post di un Utente
+      type: object
+      properties:
+        photo_id:
+          $ref: '#/components/schemas/Photo_id'
+        owner:
+          $ref: '#/components/schemas/User'
+        Timestamp:
+          $ref: '#/components/schemas/Timestamp'
+        comment:
+          description: Array di Commenti sotto la foto 
+          type: array
+          minItems: 0
+          maxItems: 99999
+          items:
+            $ref: '#/components/schemas/Comment'
+        likes:
+          description: Array di Users che hanno messo 'like' alla photo
+          type: array
+          #NON importo un Limite di Like
+          minItems: 0
+          maxItems: 99999
+          items:
+            $ref: '#/components/schemas/User'
+        image_photo:
+          $ref: '#/components/schemas/Image'
+      example:
+        photo_id: 'b7q&bd62j'
+        owner: '_Hashtag_Viinz_'
+        image_photo:  '01000010111101011101'
+        Timestamp: '2023-11-02T14:30:00Z'
+        comment:  
+          - comment_string: 'Fantastico Contenuto!'
+            comment_owner:  'Letizia'
+            Timestamp: '2023-11-02T14:30:00Z'
+        likes:
+          - user_id: 'aK3$ga12'
+            username: '_Hashtag_Viinz_'
+          - user_id: 'abdc9wdu9b'
+            username: 'Broccolo22'
+
+        
+    Photos:
+      description: Questo Oggetto del mondo rappresenta la lista di photo di un Utente
+      type: object
+      properties:
+        photos_list:
+          description: Lista di photo
+          type: array
+          #NON CI SONO LIMITI DI PHOTO CHE L'UTENTE PUÒ AVERE
+          minItems: 0
+          maxItems: 99999
+          items:
+            $ref: '#/components/schemas/Photo'
+          example:
+            - photo_id: 'b7q&bd62j'
+              owner: '_Hashtag_Viinz_'
+              image_photo:  '01000010111101011101'
+              Timestamp: '2023-11-02T14:30:00Z'
+              comment:  
+                - comment_string: 'Fantastico Contenuto!'
+                  comment_owner:  'Letizia'
+                  Timestamp: '2023-11-02T14:30:00Z'
+                  comment_photo_id: 'b7q&bd62j'
+              likes:
+                - user_id: 'aK3$ga12'
+                  username: '_Hashtag_Viinz_'
+                - user_id: 'abdc9wdu9b'
+                  username: 'Broccolo22'
+
+            - photo_id: 'ewug&5s%'
+              owner: 'Antony'
+              image_photo:  '0100001011101101'
+              Timestamp: '2023-11-02T14:30:00Z'
+              comment:  
+                - comment_string: 'WOW'
+                  comment_owner:  'Antonio'
+                  Timestamp: '2023-11-02T15:22:00Z'
+                  comment_photo_id: '7g%2sfg'
+              likes:
+                - user_id: 'aK3$ga12'
+                  username: 'Giuseppina8989'
+                - user_id: 'abdc9wdu9b'
+                  username: 'Matitina22'
+    
+    Profile:
+      description:  Questo oggetto rappresenta il profilo completo di un utente
+      type: object
+      properties:
+        user_id:
+          $ref: '#/components/schemas/User_nickname/properties/username'
+        user_nickname:
+          $ref: '#/components/schemas/User_nickname'
+        followers:
+          description: Array di followers
+          type: array
+          minItems: 0
+          maxItems: 99
+          items:
+            $ref: "#/components/schemas/User"
+          example:
+            - user_id: "mario"
+              username: "mariuccio"
+            - user_id: "andrea"
+              username: "andrew"
+
+        following:
+          description: Array di persone seguite
+          type: array
+          minItems: 0
+          maxItems: 99
+          items:
+            $ref: "#/components/schemas/User"
+          example:
+            - user_id: "mario"
+              username: "mariuccio"
+            - user_id: "andrea"
+              username: "andrew"
+
+        photos:
+          description: Array di Photo
+          type: array
+          minItems: 0
+          maxItems: 99
+          items:
+            $ref: '#/components/schemas/Photo'
+          example:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+paths:
+  /session:
+
+    post:
+      tags: ["login"]
+      summary: Logs in the user
+      description: If the user does not exist, it will be created, and an identifier is returned. If the user exists, the user identifier is returned.
+      operationId: doLogin
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Nome del Post
+                  type: string
+                  example: Maria
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+        required: true
+      responses:
+        '201':
+          description: User log-in action successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  identifier:
+                    description: Identificativo di ritorno
+                    # change here if you decide to use an integer
+                    # or any other type of identifier
+                    type: string
+                    minLength: 0
+                    maxLength: 50
+                    example: "abcdef012345"
+
+
+
+
+
+
+
+
+
+
+  /Users:
+    description: Questo path rappresenta una collezione di utenti
+    
+    #CERCO IL PROFILO DELL'UTENTE TRAMITE IL SUO ID
+    get: 
+      tags:
+        - user
+      summary: Ricerca dell'utente attraverso le query
+      description: Metodo per ottenere l'utente
+      operationId: getUserProfile
+
+      parameters:
+        - $ref: '#/components/parameters/user_query_id'
+
+      responses:
+        "200":
+          $ref: '#/components/responses/profile_found'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        "404":
+          $ref: '#/components/responses/not_found'
+        "500" :
+          $ref: '#/components/responses/Unexpected_condition'
+
+      security:
+        - bearerAuth: []
+
+    #CREO UN NUOVO UTENTE
+    post:
+      tags:
+        - user
+      summary: Creo un nuovo utente
+      description: Creo un nuovo utente con il post
+      operationId: createUser
+
+      requestBody:
+        description: Dati per creare una nuova risorsa sul server
+        required: true
+        content:
+          applicarion/json:
+            schema: {$ref: '#/components/schemas/User' }
+      
+      responses:
+        "201": 
+          $ref: '#/components/responses/user_created'
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /Users/{id}: 
+    description: Questo path rappresenta un singolo utente. Dato il suo ID
+    parameters:
+        - $ref: '#/components/parameters/user_id'
+
+    
+    #CAMBIAMO IL NICKNAME DELL'UTENTE
+    put:
+      tags:
+        - user
+      summary: Cambiamo il nickname dell'utente
+      description: Cambio il nickname dell'utente con put
+      operationId: setMyUserName
+
+      requestBody:
+        required: true
+        content:
+          applicarion/json:
+            schema: 
+              $ref: '#/components/schemas/User_nickname'
+            example:
+              nickname: '_Hashtag_Viinz_'
+
+      responses:  
+        "204":
+          $ref: '#/components/responses/no_content'
+        "401": 
+          $ref: '#/components/responses/no_content'
+        '403': 
+          $ref: '#/components/responses/forbidden'
+        "404": 
+          $ref: '#/components/responses/not_found'
+        "500":
+          $ref: '#/components/responses/Unexpected_condition'
+
+      security:
+        - bearerAuth: []
+
+
+
+
+
+
+
+
+  /Users/{id}/home:
+    description: Questo path rappresenta la home di un singolo utente
+    parameters:
+        - $ref: '#/components/parameters/user_id'
+    
+    #OTTENGO LO STREAM DELL'UTENTE 
+    get:
+      tags:
+        - stream
+      summary: Ottiene lo Stream di foto dell'Utente 
+      description: Ottengo lo stream di foto dell'utente con metodo get
+      operationId: getMyStream
+
+      responses:
+        "200": 
+          $ref: '#/components/responses/stream_response'
+        '401':
+          $ref: "#/components/responses/unauthorized"
+        '404':
+          $ref: "#/components/responses/not_found"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition"
+
+      security:
+        - bearerAuth: []
+
+
+
+
+
+
+
+
+
+
+
+  /Users/{id}/followers/{follower_id}: 
+    description: Questo path rappresenta il singolo follower
+    parameters:
+        - $ref: '#/components/parameters/user_id'
+        - $ref: '#/components/parameters/follower_id'
+      
+    put: 
+      tags:
+        - follower
+      summary: Segui un Utente follower_id
+      description: Seguo un Utente follower_id con il metodo put
+      operationId: followUser
+
+      responses:
+        '204': 
+          $ref: "#/components/responses/no_content"
+        '401': 
+          $ref: "#/components/responses/unauthorized"
+        '403': 
+          $ref: '#/components/responses/forbidden'
+        '404': 
+          $ref: "#/components/responses/not_found"
+        '500': 
+          $ref: "#/components/responses/Unexpected_condition"
+      security:
+        - bearerAuth: []
+
+    delete:
+      tags:
+        - follower
+      summary: togli il follow all'utente follower_id
+      description: tolgo il follow all'utente follower_id usando il metodo delete
+      operationId: unfollowUser
+
+      responses:
+        '204':
+          $ref: "#/components/responses/no_content"
+        '401':
+          $ref: "#/components/responses/unauthorized"
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: "#/components/responses/not_found"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition"    
+      security:
+        - bearerAuth: []
+
+
+
+
+
+
+
+
+
+
+  /Users/{id}/banned_users/{banned_user_id}: 
+    description: Questo path rappresenta il singolo Utente bannato nella collection di Utenti bannati
+    parameters:
+        - $ref: '#/components/parameters/user_id'
+        - $ref: '#/components/parameters/banned_user_id'
+    
+    #banUser - Banniamol'utente
+    put: 
+      tags:
+        - ban
+      summary: Banniamo l'utente
+      description: Banno l'utente con il metodo put
+      operationId: banUser
+
+      responses:
+        '204': 
+          $ref: "#/components/responses/no_content"
+        '401': 
+          $ref: "#/components/responses/unauthorized"
+        '403': 
+          $ref: '#/components/responses/forbidden'
+        '404':  
+          $ref: "#/components/responses/not_found"
+        '500':  
+          $ref: "#/components/responses/Unexpected_condition"
+      security:
+        - bearerAuth: []
+
+    #unbanUser - UNBANNIAMO L'UTENTE
+    delete:
+      tags:
+        - ban
+      summary: Unbanniamo l'utente
+      description: Unbanno l'utente con il metodo delete
+      operationId: unbanUser
+
+      responses:
+        '204':
+          $ref: "#/components/responses/no_content"
+        '401':
+          $ref: "#/components/responses/unauthorized"
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: "#/components/responses/not_found"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition"
+      security:
+        - bearerAuth: []
+
+
+
+
+
+
+
+
+
+  /Users/{id}/photos:
+    description: Questo path rappresenta la sezione photo dell'utente
+    parameters:
+        - $ref: '#/components/parameters/user_id'
+    
+    #POST DI UNA FOTO DELL'UTENTE 
+    post: 
+      tags:
+        - photo
+      summary: L'utente carica una foto
+      description: L'utente carica una foto attraverso  il metodo post
+      operationId: uploadPhoto
+
+      requestBody:
+        content:
+          image/*:  #POSSO PASSARE QUALSIASI TIPO DI IMMAGINE
+            schema: 
+              $ref: '#/components/schemas/Image'
+
+      responses:
+        "201": 
+          $ref: '#/components/responses/image_uploaded'
+        '401':
+          $ref: "#/components/responses/unauthorized"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition"
+      security:
+        - bearerAuth: []
+
+
+
+
+
+
+
+
+  /Users/{id}/Photos/{photo_id}:
+    description: Questo path rappresenta la sezione photo {id_photo} degli Utenti ID. Così da specificare quali Operazioni posso svolgere con la singola photo. Vogliamo infatti poter ottenere le singole foto attraverso --> getPhoto and eliminare le foto dell'utente --> deletePhoto
+    parameters:
+      - $ref: '#/components/parameters/user_id'
+      - $ref: '#/components/parameters/photo_id'
+    
+
+    #GetPhoto OTTENIAMO LA FOTO RICHIESTA
+    get:
+      tags:
+        - photo
+      summary: Otteniamo la foto
+      description: Ottengo la foto attraverso il metodo get
+      operationId: getPhoto
+
+      responses:
+        "200":
+          $ref: '#/components/responses/photo'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: "#/components/responses/not_found"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition"
+      security:
+        - bearerAuth: []
+
+    #DeletePhoto - L'UTENTE ID PUÒ ELIMINARE UNA FOTO
+    delete:
+      tags:
+        - photo
+      summary: Eliminiamo la foto Photo_id
+      description: Elimino la foto Photo_id attraverso il metodo delete
+      operationId: deletePhoto
+      
+      responses:
+        "204":
+          $ref: '#/components/responses/no_content'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: "#/components/responses/not_found"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition" 
+      security:
+        - bearerAuth: []
+  
+
+
+
+
+
+
+
+
+
+
+  /Users/{id}/Photos/{photo_id}/comments:
+    description: path dedicata ai commenti
+    parameters:
+      - $ref: '#/components/parameters/user_id'
+      - $ref: '#/components/parameters/photo_id'
+    
+    #commentPhoto - COMMENTIAMO LA FOTO 
+    post: 
+      tags:
+        - comments
+      summary: Commentiamo la Photo
+      description: Commeniamo la photo usando il metodo post
+      operationId: commentPhoto
+
+      requestBody:
+        description: Abbiamo l'id della persona che commenta
+        content:
+          applicarion/json:
+            schema: 
+              $ref: '#/components/schemas/Comment'
+        required: true
+
+      responses:
+        "201":
+          $ref: '#/components/responses/comment_added'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: "#/components/responses/not_found"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition"
+      security:
+        - bearerAuth: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /Users/{id}/Photos/{photo_id}/comments/{comment_id}: 
+    description: path dedicato alla gestione del singolo commento
+    parameters:
+      - $ref: '#/components/parameters/user_id'
+      - $ref: '#/components/parameters/photo_id'
+      - $ref: '#/components/parameters/comment_id'
+    
+    #uncommentPhoto - ELIMINIAMO IL COMMENTO 
+    delete:
+      tags:
+        - comments
+      summary: Eliminiamo il commento 
+      description: Elimino il commento usando il metodo delete
+      operationId: uncommentPhoto
+
+      responses:
+        "204":
+          $ref: '#/components/responses/no_content'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: "#/components/responses/not_found"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition"
+      security:
+        - bearerAuth: []  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /Users/{id}/Photos/{photo_id}/Likes/{like_id}:
+    description: path dedicato alla gestione dei like - RIcorda che abbiamo elaborato i like come se fossero un'array di Users
+
+    parameters:
+      - $ref: '#/components/parameters/user_id'
+      - $ref: '#/components/parameters/photo_id'
+      - $ref: '#/components/parameters/like_id'
+
+    post: 
+      tags:
+        - like
+      summary: Postiamo un Like ad una foto
+      description: Posto un like ad una foto usando il metodo post
+      operationId: likePhoto
+
+      requestBody:
+        content:
+          applicarion/json:
+            schema: 
+              $ref: '#/components/schemas/User'
+      
+      responses:
+        '201':
+          $ref: '#/components/responses/like_added'
+        '204':
+          $ref: '#/components/responses/no_content'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '404':
+          $ref: "#/components/responses/not_found"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition"
+      security:
+        - bearerAuth: []
+
+    delete:
+      tags:
+        - like
+      summary: Togliamo il like dalla photo
+      description: Tolgo il like dalla photo usando il metodo delete
+      operationId: unlikePhoto
+
+      responses:
+        '204':
+          $ref: '#/components/responses/no_content'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '404':
+          $ref: "#/components/responses/not_found"
+        '500':
+          $ref: "#/components/responses/Unexpected_condition"
+      security:
+        - bearerAuth: []
