@@ -310,32 +310,12 @@ components:
       properties:
         #Il nome utente dell'utente è anche il suo id. essendo univoco nel mio universo
         user_id:
-          description: Questo oggetto rappresenta l'username dell'Utente
-          type: object
-          $ref: '#/components/schemas/User_nickname/properties/username' 
+          $ref: '#/components/schemas/User_nickname' 
         nickname:    
           $ref: '#/components/schemas/User_nickname'
       example:
         user_id: 'aK3$ga12'
         username: '_Hashtag_Viinz_'
-
-    Users_list:
-      description: Una lista di utenti
-      type: object
-      properties:
-        users: 
-          description: Lista di utenti
-          type: array
-          #NON INSERISCO QUANTI UTENTI POSSONO ESSERCI
-          minItems: 0
-          maxItems: 9999
-          items: 
-            $ref: '#/components/schemas/User'
-          example:
-            - user_id: 'aK3$ga12'
-              username: '_Hashtag_Viinz_'
-            - user_id: 'sh&%ft12'
-              username: 'LetiziaM'
 
 
     Timestamp:
@@ -352,6 +332,7 @@ components:
         comment_string:
           description: Stringa del commento
           type: string
+          pattern: '^.*?$'
           minLength: 1
           maxLength: 300
           example: "Meravigliosa questa foto! InstaLovva!"
@@ -369,6 +350,8 @@ components:
         image_code:
           description: Codice binario che rappresenta il codice dell'immagine
           type: string
+          minLength: 0
+          maxLength: 1000000
           format: binary
           example: '01000111101011010010' #RAPPRESENTAZIONE DI UN IMMAGINE IN BINARIO
 
@@ -378,14 +361,10 @@ components:
       type: object
       properties:
         photo_id:
-          description: Questo oggetto rappresenta photo_id
-          type: object
-          $ref: '#/components/schemas/Photo_id/properties/id_code'
+          $ref: '#/components/schemas/Photo_id'
         owner:
-          description: Proprietario della foto
           $ref: '#/components/schemas/User'
         Timestamp:
-          description: Timestamp a Stringa della pubblicazione della foto
           $ref: '#/components/schemas/Timestamp'
         comment:
           description: Array di Commenti sotto la foto 
@@ -403,7 +382,6 @@ components:
           items:
             $ref: '#/components/schemas/User'
         image_photo:
-          description: Immagine della foto
           $ref: '#/components/schemas/Image'
       example:
         photo_id: 'b7q&bd62j'
@@ -412,7 +390,7 @@ components:
         Timestamp: '2023-11-02T14:30:00Z'
         comment:  
           - comment_string: 'Fantastico Contenuto!'
-            owner:  'Letizia'
+            comment_owner:  'Letizia'
             Timestamp: '2023-11-02T14:30:00Z'
         likes:
           - user_id: 'aK3$ga12'
@@ -440,7 +418,7 @@ components:
               Timestamp: '2023-11-02T14:30:00Z'
               comment:  
                 - comment_string: 'Fantastico Contenuto!'
-                  owner:  'Letizia'
+                  comment_owner:  'Letizia'
                   Timestamp: '2023-11-02T14:30:00Z'
                   comment_photo_id: 'b7q&bd62j'
               likes:
@@ -455,7 +433,7 @@ components:
               Timestamp: '2023-11-02T14:30:00Z'
               comment:  
                 - comment_string: 'WOW'
-                  owner:  'Antonio'
+                  comment_owner:  'Antonio'
                   Timestamp: '2023-11-02T15:22:00Z'
                   comment_photo_id: '7g%2sfg'
               likes:
@@ -469,17 +447,44 @@ components:
       type: object
       properties:
         user_id:
-          description: Questo oggetto rappresenta l'username dell'Utente
-          type: object
           $ref: '#/components/schemas/User_nickname/properties/username'
         user_nickname:
           $ref: '#/components/schemas/User_nickname'
         followers:
-          $ref: '#/components/schemas/Users_list'
+          description: Array di followers
+          type: array
+          minItems: 0
+          maxItems: 99
+          items:
+            $ref: "#/components/schemas/User"
+          example:
+            - user_id: "mario"
+              username: "mariuccio"
+            - user_id: "andrea"
+              username: "andrew"
+
         following:
-          $ref: '#/components/schemas/Users_list'
+          description: Array di persone seguite
+          type: array
+          minItems: 0
+          maxItems: 99
+          items:
+            $ref: "#/components/schemas/User"
+          example:
+            - user_id: "mario"
+              username: "mariuccio"
+            - user_id: "andrea"
+              username: "andrew"
+
         photos:
-          $ref: '#/components/schemas/Photos'
+          description: Array di Photo
+          type: array
+          minItems: 0
+          maxItems: 99
+          items:
+            $ref: '#/components/schemas/Photo'
+          example:
+
 
 
 
@@ -562,6 +567,8 @@ paths:
                     # change here if you decide to use an integer
                     # or any other type of identifier
                     type: string
+                    minLength: 0
+                    maxLength: 50
                     example: "abcdef012345"
 
 
