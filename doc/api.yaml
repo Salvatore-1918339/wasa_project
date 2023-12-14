@@ -5,11 +5,10 @@
 #
 #################################################
 openapi: 3.0.0
+
 info:
   title: Simplified login API specification
-  description: |-
-    This OpenAPI document describes the simplified login API.
-    Copy and paste the API from the `paths` key to your OpenAPI document.
+  description: This OpenAPI document describes the simplified login API.Copy and paste the API from the `paths` key to your OpenAPI document.
   version: 0.0.1
   contact:
     name: Vincenzo Salvatore
@@ -192,8 +191,7 @@ components:
         description: id dell'utente
         type: string
         pattern: "^.*?$"
-        minLength: 3
-        maxLength: 16
+        #QUI HO TOLTO MINLENGHT E MAX PERCHE mi ha detto che non vanno qua
         example: "Leti"
       example: "Leti"
 
@@ -205,8 +203,7 @@ components:
   schemas:
     #Nickname di un User
     User_nickname:
-      description: |
-        Questo oggetto rappresenta l'username dell'Utente
+      description: Questo oggetto rappresenta l'username dell'Utente
       type: object
       properties:
         username:
@@ -260,9 +257,7 @@ components:
         id_code: 1342
 
     User:
-      description: |
-        Questo oggetto rappresenta un Utente nel mondo che stiamo andando a
-        Creare.
+      description: Questo oggetto rappresenta un Utente nel mondo che stiamo andando a Creare.
       type: object
       properties:
         #Il nome utente dell'utente è anche il suo id. essendo univoco nel mio universo
@@ -300,7 +295,6 @@ components:
       type: object
       properties:
         comment_string:
-          maximum: 300
           example: "Meravigliosa questa foto! InstaLovva!"
         comment_owner:
           $ref: "#/components/schemas/User"
@@ -399,10 +393,7 @@ paths:
     post:
       tags: ["login"]
       summary: Logs in the user
-      description: |-
-        If the user does not exist, it will be created,
-        and an identifier is returned.
-        If the user exists, the user identifier is returned.
+      description: If the user does not exist, it will be created, and an identifier is returned. If the user exists, the user identifier is returned.
       operationId: doLogin
       requestBody:
         description: User details
@@ -660,10 +651,7 @@ paths:
         - bearerAuth: []
 
   /Users/{user_id}/Photos/{photo_id}:
-    description: |
-      Questo path rappresenta la sezione photo {id_photo} degli Utenti ID. Così da specificare quali
-      Operazioni posso svolgere con la singola photo. Vogliamo infatti poter ottenere le singole foto
-      attraverso --> getPhoto and eliminare le foto dell'utente --> deletePhoto
+    description: Questo path rappresenta la sezione photo {id_photo} degli Utenti ID. Così da specificare quali Operazioni posso svolgere con la singola photo. Vogliamo infatti poter ottenere le singole foto attraverso --> getPhoto and eliminare le foto dell'utente --> deletePhoto
     parameters:
       - $ref: "#/components/parameters/user_id"
       - $ref: "#/components/parameters/photo_id"
@@ -766,9 +754,7 @@ paths:
         - bearerAuth: []
 
   /Users/{user_id}/Photos/{photo_id}/Likes/{like_id}:
-    description: |
-      path dedicato alla gestione dei like -
-      RIcorda che abbiamo elaborato i like come se fossero un'array di Users
+    description: path dedicato alla gestione dei like - RIcorda che abbiamo elaborato i like come se fossero un'array di Users
 
     parameters:
       - $ref: "#/components/parameters/user_id"
