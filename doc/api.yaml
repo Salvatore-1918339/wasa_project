@@ -396,7 +396,11 @@ components:
         following:
           $ref: "#/components/schemas/Users_list"
         photos:
-          $ref: "#/components/schemas/Photos"
+          description: Array di ID di Photo
+          type: Array
+          minItems: 0
+          maxItems: 50
+          $ref: "#/components/schemas/Photo_id"
 
 paths:
   /session:
