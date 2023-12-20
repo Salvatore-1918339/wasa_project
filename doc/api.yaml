@@ -295,13 +295,23 @@ components:
       type: object
       properties:
         comment_string:
+          type: string
+          minLength: 1
+          maxLength: 300
+          pattern: "^.*?$"
+          description: commento
           example: "Meravigliosa questa foto! InstaLovva!"
         comment_owner:
-          $ref: "#/components/schemas/User"
+          $ref: "#/components/schemas/User_id/properties/user_id"
         comment_timespamp:
           $ref: "#/components/schemas/Timestamp"
         comment_identifier:
-          $ref: "#/components/schemas/Comment_id"
+          $ref: "#/components/schemas/Comment_id/properties/id_code"
+      example:
+        comment_string: "Meravigliosa questa foto!"
+        comment_owner: 2
+        comment_timespamp: "2023-11-02T14:30:00Z"
+        comment_identifier: 1234
 
     Image:
       description: Oggetto che rappresenta un'immagine
