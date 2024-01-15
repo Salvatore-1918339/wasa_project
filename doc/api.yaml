@@ -43,7 +43,7 @@ components:
       content:
         applicarion/json:
           schema:
-            $ref: "#/components/schemas/Profile"
+            $ref: "#/components/schemas/Users_list"
 
     user_created:
       description: Utente Creato correttamente
@@ -95,6 +95,9 @@ components:
 
     Unexpected_condition:
       description: unknown server error
+
+    bad_request:
+      description: richiesta inviata al server è sintatticamente errata
 
   parameters:
     #ID_UTENTE
@@ -506,12 +509,10 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/no_content"
-        "401":
-          $ref: "#/components/responses/no_content"
+        "400":
+          $ref: "#/components/responses/bad_request"
         "403":
           $ref: "#/components/responses/forbidden"
-        "404":
-          $ref: "#/components/responses/not_found"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
 
@@ -776,23 +777,16 @@ paths:
       - $ref: "#/components/parameters/photo_id"
       - $ref: "#/components/parameters/like_id"
 
-    post:
+    put:
       tags:
         - like
+      description: messiamo like ad una photo
       summary: Postiamo un Like ad una foto
       operationId: likePhoto
-
-      requestBody:
-        content:
-          applicarion/json:
-            schema:
-              $ref: "#/components/schemas/User"
 
       responses:
         "204":
           $ref: "#/components/responses/no_content"
-        "401":
-          $ref: "#/components/responses/unauthorized"
         "403":
           $ref: "#/components/responses/forbidden"
         "404":
