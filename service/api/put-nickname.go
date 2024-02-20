@@ -12,8 +12,6 @@ import (
 
 func (rt *_router) PutNickname(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	// CIAO CIAO CIAO
-
 	user_id_str := ps.ByName("id")
 	requestingUserId_str, err := extractBearerToken(r, w)
 

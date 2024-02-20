@@ -19,6 +19,7 @@ func validCommentString(comment Comment) bool {
 
 // ! estrazione del TOKEN di Autenticazione
 func extractBearerToken(req *http.Request, w http.ResponseWriter) (string, error) {
+
 	// Ottieni l'intestazione Authorization dalla richiesta
 	authHeader := req.Header.Get("Authorization")
 

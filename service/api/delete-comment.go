@@ -32,9 +32,14 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 	banned, err := rt.db.CheckBan(
 		User{User_id: requestingUser_id}.toDataBase(), // ? User che potrebbe essere bannato
 		User{User_id: photo_id}.toDataBase())          // ? Owner della photo
+	if err != nil {
+		ctx.Logger.WithError(err).Error("delete-comment: Error in CheckBan")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	if banned {
-		ctx.Logger.WithError(errors.New("L'utente è bloccato")).Error("Impossibile eseguire l'operazione")
+		ctx.Logger.WithError(errors.New("l'utente è bloccato")).Error("Impossibile eseguire l'operazione")
 		w.WriteHeader(http.StatusForbidden) //errore 403
 		return
 	}

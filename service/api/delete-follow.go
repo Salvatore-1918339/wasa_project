@@ -19,7 +19,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 
 	// ? controllo se sono uguali
 	if userId == userToUnFollowId {
-		ctx.Logger.WithError(errors.New("The user cannot follow himself")).Error("followUser: Error")
+		ctx.Logger.WithError(errors.New("the user cannot follow himself")).Error("followUser: Error")
 		return
 	}
 
