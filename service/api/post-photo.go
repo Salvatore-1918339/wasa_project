@@ -2,6 +2,8 @@ package api
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"image/jpeg"
 	"io"
 	"net/http"
@@ -18,7 +20,26 @@ func (rt *_router) PostPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 
 	w.Header().Set("Content-Type", "application/json")
 
-	//Contenuto del Body
+	user_id_str := ps.ByName("id")
+	requestingUserId_str, err := extractBearerToken(r, w)
+	// Controllo errore dall'estrazione del TOKEN
+	if err != nil {
+		w.WriteHeader(http.StatusForbidden)
+		ctx.Logger.WithError(err).Error("GetNIcknameHandler: Error")
+		return
+	}
+
+	user_id, _ := strconv.Atoi(user_id_str)
+	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
+
+	// ! check Login
+	if user_id != requestingUserId {
+		w.WriteHeader(http.StatusForbidden) // 403
+		ctx.Logger.WithError(errors.New("you aren't allowed to use this operation")).Error("post-photo: Error")
+		return
+	}
+
+	// Contenuto del Body
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("photo-upload: error reading body content")
@@ -26,13 +47,13 @@ func (rt *_router) PostPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	//Controllo il Formato della Foto
+	// Controllo il Formato della Foto
 	errFormatJpg := checkFormatJpg(io.NopCloser(bytes.NewBuffer(data))) //passo dei Bytes da consumare
 	if errFormatJpg != nil {
 		ctx.Logger.WithError(errFormatJpg).Error("photo-upload: Error not supported format")
 	}
 
-	//Mi serve un ID UNIVOCO per la foto
+	// Mi serve un ID UNIVOCO per la foto
 	currentTime := time.Now()
 	datetime := currentTime.Format("2006-01-02 15:04:05")
 	id_user, _ := strconv.Atoi(ps.ByName("id"))
@@ -45,11 +66,10 @@ func (rt *_router) PostPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 
 	strPhotoId := strconv.Itoa(PhotoId)
 
-	//Prendo l'PATH delle PHOTO dell'User
+	// Prendo l'PATH delle PHOTO dell'User
 	path := filepath.Join("/tmp", "media", ps.ByName("id"), "photos") // /tmp/media/:id/photos
-
-	//Creo un nuovo file dentro la cartella foto del Utente
-
+	fmt.Print(filepath.Join("\n\nUpload photo: ", path, strPhotoId+".jpg"))
+	// Creo un nuovo file dentro la cartella foto del Utente
 	outputFile, err := os.Create(filepath.Join(path, strPhotoId+".jpg"))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

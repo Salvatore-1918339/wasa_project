@@ -29,7 +29,7 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 	// ! Controllo se l'Utente può effettuare l'operazione - Non è il proprietario del profilo
 	if profileOwnerId != requestingUserId {
 		w.WriteHeader(http.StatusForbidden)
-		ctx.Logger.WithError(errors.New("You cannot do this")).Error("getMyStream: Error")
+		ctx.Logger.WithError(errors.New("you cannot do this")).Error("getMyStream: Error")
 		return
 	}
 

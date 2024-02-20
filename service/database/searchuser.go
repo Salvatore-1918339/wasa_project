@@ -2,7 +2,7 @@ package database
 
 func (db *appdbimpl) SearchUser(queryStr string) ([]User, error) {
 
-	queryRes, err := db.c.Query("SELECT * FROM Users WHERE nickname LIKE ? ", queryStr+"%")
+	queryRes, err := db.c.Query("SELECT * FROM Users WHERE nickname LIKE ? ", "%"+queryStr+"%")
 	if err != nil {
 		return nil, err
 	}

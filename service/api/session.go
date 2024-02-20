@@ -21,7 +21,7 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 	// Prende Utente passato in r
 	var user User
 	err := json.NewDecoder(r.Body).Decode(&user)
-	fmt.Print("\n#!# UTENTE PASSATO : ", user.Nickname)
+	// fmt.Print("\n#!# UTENTE PASSATO : ", user.Nickname)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

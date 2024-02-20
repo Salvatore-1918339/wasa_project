@@ -25,10 +25,10 @@ func (rt *_router) PutNickname(w http.ResponseWriter, r *http.Request, ps httpro
 	user_id, _ := strconv.Atoi(user_id_str)
 	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
 
-	// ! Non è l'utente Loggato che sta cercando di effetturare questa operazione
+	// ! Login
 	if user_id != requestingUserId {
 		w.WriteHeader(http.StatusForbidden)
-		ctx.Logger.WithError(errors.New("you aren't allowed to use this operation")).Error("GetNIcknameHandler: Error")
+		ctx.Logger.WithError(errors.New("you aren't allowed to use this operation")).Error("putNickname: Error")
 		return
 	}
 
@@ -37,7 +37,7 @@ func (rt *_router) PutNickname(w http.ResponseWriter, r *http.Request, ps httpro
 	err = json.NewDecoder(r.Body).Decode(&newNickname)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("update-nickname: error decoding json")
-		w.WriteHeader(http.StatusBadRequest) // ! Errore 400
+		w.WriteHeader(http.StatusBadRequest) // Errore 400
 		return
 	} else if !validIdentifier(newNickname.Nickname) {
 		ctx.Logger.WithError(errors.New("nickname provided does not meet the necessary conditions")).Error("update-nickname: Error in Nickname section")
