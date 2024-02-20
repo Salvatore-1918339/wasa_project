@@ -25,12 +25,12 @@ func extractBearerToken(req *http.Request, w http.ResponseWriter) (string, error
 	// Verifica se l'intestazione Authorization è vuota o mancante
 	if authHeader == "" {
 		w.WriteHeader(http.StatusForbidden)
-		return "", errors.New("Intestazione Authorization mancante")
+		return "", errors.New("intestazione Authorization mancante")
 	}
 
 	// Verifica se l'intestazione inizia con "Bearer "
 	if !strings.HasPrefix(authHeader, "Bearer ") {
-		return "", errors.New("Formato di Authorization non valido. Deve iniziare con 'Bearer '")
+		return "", errors.New("formato di Authorization non valido. Deve iniziare con 'Bearer '")
 	}
 
 	// Estrai il token Bearer dalla stringa dell'intestazione

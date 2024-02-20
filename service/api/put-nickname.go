@@ -12,6 +12,8 @@ import (
 
 func (rt *_router) PutNickname(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
+	// CIAO CIAO CIAO
+
 	user_id_str := ps.ByName("id")
 	requestingUserId_str, err := extractBearerToken(r, w)
 
@@ -28,7 +30,7 @@ func (rt *_router) PutNickname(w http.ResponseWriter, r *http.Request, ps httpro
 	// ! Non è l'utente Loggato che sta cercando di effetturare questa operazione
 	if user_id != requestingUserId {
 		w.WriteHeader(http.StatusForbidden)
-		ctx.Logger.WithError(errors.New("you aren't allowed to  use this operation")).Error("GetNIcknameHandler: Error")
+		ctx.Logger.WithError(errors.New("you aren't allowed to use this operation")).Error("GetNIcknameHandler: Error")
 		return
 	}
 

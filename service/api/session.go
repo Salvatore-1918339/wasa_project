@@ -27,7 +27,7 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	} else if !validIdentifier(user.Nickname) {
-		ctx.Logger.WithError(err).Error("session: Can't Create a User. User nickname not Valid.")
+		ctx.Logger.WithError(err).Error("session: Can't Create a User. User nickname not Valid. <<")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
