@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,26 +10,28 @@ import (
 )
 
 func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	// prendiamo gli ID
-	// ! TODO - Cambia questa parte e falla più elegante
-
-	banner_str := ps.ByName("id")
-	banned_str := ps.ByName("banned_user_id")
-
-	// Convertiamo
-	banner, _ := strconv.Atoi(banner_str)
-	banned, _ := strconv.Atoi(banned_str)
-
-	fmt.Print("Banner: ", banner, " banned:", banned)
-
-	// Controllo se gli ID sono uguali
-	if banner == banned {
-		ctx.Logger.WithError(errors.New("The user cannot ban himself")).Error("putBan: error")
+	banner, err := strconv.Atoi(ps.ByName("id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("putBan: error conversion")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	banned, err := strconv.Atoi(ps.ByName("banned_user_id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("putBan: error conversion")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	// ESEGUO IL BAN
-	err := rt.db.BanUser(
+	// Controllo se gli ID sono uguali
+	if banner == banned {
+		ctx.Logger.WithError(errors.New("the user cannot ban himself")).Error("putBan: error")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// ! Eseguo il Ban
+	err = rt.db.BanUser(
 		User{User_id: banner}.toDataBase(),
 		User{User_id: banned}.toDataBase())
 
@@ -39,7 +40,6 @@ func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	fmt.Print("\nUser:", banner, " banned: ", banned)
 
 	// ? TOLGO IL FOLLOW DA ENTRAMBI
 	err = rt.db.UnFollowUser(
@@ -48,6 +48,7 @@ func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.
 
 	if err != nil {
 		ctx.Logger.WithError(err).Error("putBan: error executing the unfollow query")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

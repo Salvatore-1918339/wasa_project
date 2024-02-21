@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 )
 
 func (db *appdbimpl) CheckBan(banned User, photo_owner User) (bool, error) {
@@ -16,7 +15,6 @@ func (db *appdbimpl) CheckBan(banned User, photo_owner User) (bool, error) {
 	if err != nil {
 		return true, err
 	}
-	fmt.Print("\nCheckBa - counter :", counter)
 	// Controllo se COUNTER è vuoto
 	if counter != 0 { //se è diverso da 0 significa che abbiamo trovato una riga, quindi è bannato
 		return true, nil

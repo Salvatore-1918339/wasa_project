@@ -13,7 +13,6 @@ import (
 
 func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	w.Header().Set("Content-Type", "application/json")
 	photoOwnerId_str := ps.ByName("id")
 	photoId_str := ps.ByName("photo_id")
 	requestingUserId_str, err := extractBearerToken(r, w)
@@ -34,10 +33,14 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	banned, err := rt.db.CheckBan(
 		User{User_id: requestingUserId}.toDataBase(),
 		User{User_id: photoOwnerId}.toDataBase())
-
+	if err != nil {
+		ctx.Logger.WithError(err).Error("post-comment: Error check ban query")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	if banned {
-		ctx.Logger.WithError(errors.New("L'utente è bloccato")).Error("Impossibile eseguire l'operazione")
-		w.WriteHeader(http.StatusForbidden) //errore 403
+		ctx.Logger.WithError(errors.New("the user is banned")).Error("post-comment: Error")
+		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 

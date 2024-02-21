@@ -35,8 +35,14 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// ! login
+	requestingUserId, err := strconv.Atoi(requestingUserId_str)
+	if requestingUserId != user_id {
+		w.WriteHeader(http.StatusUnauthorized)
+		ctx.Logger.WithError(err).Error("delete-photo: Error Unauthorized")
+		return
+	}
 
-	// elimino la foto dal DB
+	// ! elimino la foto dal DB
 	err = rt.db.DeletePhoto(user_id, photo_id)
 	if err != nil {
 		if err == sql.ErrNoRows {

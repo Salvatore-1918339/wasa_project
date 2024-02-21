@@ -566,8 +566,6 @@ paths:
           $ref: "#/components/responses/unauthorized"
         "403":
           $ref: "#/components/responses/forbidden"
-        "404":
-          $ref: "#/components/responses/not_found"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:

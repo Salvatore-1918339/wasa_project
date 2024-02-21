@@ -10,28 +10,38 @@ import (
 )
 
 func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	userId_str := ps.ByName("id")
-	photoId_str := ps.ByName("photo_id")
-	likeId_str := ps.ByName("like_id")
 	requestingUserId_str, err := extractBearerToken(r, w)
-
-	// Controllo errore dall'estrazione del TOKEN
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		ctx.Logger.WithError(err).Error("commentPhoto: Error")
+		w.WriteHeader(http.StatusBadRequest)
+		ctx.Logger.WithError(err).Error("put-like: Error extract token")
 		return
 	}
 
 	// Converto i Valori ID in Interi
-	user_id, _ := strconv.Atoi(userId_str)
-	photo_id, _ := strconv.Atoi(photoId_str)
-	like_id, _ := strconv.Atoi(likeId_str)
+	user_id, err := strconv.Atoi(ps.ByName("id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-like: Error conversion")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	photo_id, err := strconv.Atoi(ps.ByName("photo_id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-like: Error conversion")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	like_id, _ := strconv.Atoi(ps.ByName("like_id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-like: Error conversion")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
 
-	// Controllo che l'utente che mette like sia quello auth
+	// ! Login
 	if like_id != requestingUserId {
-		ctx.Logger.WithError(errors.New("Non sei autorizzato ad eseguire questa operazione")).Error("Impossibile eseguire l'operazione")
-		w.WriteHeader(http.StatusForbidden) //errore 403
+		ctx.Logger.WithError(errors.New("unauthorized")).Error("put-like: error")
+		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 
@@ -39,10 +49,14 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	banned, err := rt.db.CheckBan(
 		User{User_id: requestingUserId}.toDataBase(),
 		User{User_id: user_id}.toDataBase())
-
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-like: Error check ban query")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	if banned {
-		ctx.Logger.WithError(errors.New("L'utente è bloccato")).Error("Impossibile eseguire l'operazione")
-		w.WriteHeader(http.StatusForbidden) //errore 403
+		ctx.Logger.WithError(errors.New("the User is banned")).Error("put-like: Error")
+		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 
@@ -51,10 +65,9 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		Photo_id{Photo_id: photo_id}.toDataBase(),
 		User{User_id: requestingUserId}.toDataBase())
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in PutLike: error executing query ")
-		w.WriteHeader(http.StatusInternalServerError) //errore 403
+		ctx.Logger.WithError(err).Error("put-like: error executing query ")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusNoContent) // 204
+	w.WriteHeader(http.StatusNoContent)
 }
