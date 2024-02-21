@@ -17,7 +17,7 @@ func (db *appdbimpl) CreateUser(u User) error {
 	}
 
 	UserId, err := result.LastInsertId()
-	fmt.Print(" Id Assegnato nel DB : ", UserId)
+	fmt.Print("\n Id Assegnato nel DB : ", UserId)
 	return nil
 
 }

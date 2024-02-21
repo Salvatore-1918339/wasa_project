@@ -93,6 +93,9 @@ components:
     not_found:
       description: Risorsa non trovata
 
+    StatusInternalServerError:
+      description: Errore interno nel server
+
     Unexpected_condition:
       description: unknown server error
 
@@ -705,8 +708,8 @@ paths:
           $ref: "#/components/responses/unauthorized"
         "404":
           $ref: "#/components/responses/not_found"
-        "500":
-          $ref: "#/components/responses/Unexpected_condition"
+        "500": 
+          $ref: "#/components/responses/StatusInternalServerError"
       security:
         - bearerAuth: []
 

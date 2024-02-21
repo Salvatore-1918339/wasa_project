@@ -50,7 +50,9 @@ func (rt *_router) PostPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	// Controllo il Formato della Foto
 	errFormatJpg := checkFormatJpg(io.NopCloser(bytes.NewBuffer(data))) //passo dei Bytes da consumare
 	if errFormatJpg != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		ctx.Logger.WithError(errFormatJpg).Error("photo-upload: Error not supported format")
+		return
 	}
 
 	// Mi serve un ID UNIVOCO per la foto
