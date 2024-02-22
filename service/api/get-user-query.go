@@ -17,7 +17,7 @@ import (
 	- 500 : StatusInternalServerError
 */
 
-func (rt *_router) getUsersQuery(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	w.Header().Set("Content-Type", "application/json")
 	queryStr := r.URL.Query().Get("user_query_id") // Prendo il Nickname
@@ -26,7 +26,7 @@ func (rt *_router) getUsersQuery(w http.ResponseWriter, r *http.Request, ps http
 	identifier_str, err := extractBearerToken(r, w)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("get-user-query: Authentication Error")
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 	identifier, _ := strconv.Atoi(identifier_str)
@@ -36,6 +36,12 @@ func (rt *_router) getUsersQuery(w http.ResponseWriter, r *http.Request, ps http
 	if err != nil {
 		ctx.Logger.WithError(err).Error("get-user-query: Error executing query")
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// ! Manda l'output all'utente
+	if len(values) == 0 {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -54,11 +60,6 @@ func (rt *_router) getUsersQuery(w http.ResponseWriter, r *http.Request, ps http
 		}
 	}
 
-	// ! Manda l'output all'utente
-	if len(values) == 0 {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
 	// Ritorno nell'Header STATUS OK
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(users)

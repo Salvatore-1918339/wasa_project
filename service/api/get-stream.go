@@ -52,9 +52,8 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 			return
 		}
 		// Aggiungi gli elementi di photos a stream_photos
-		for _, elemento := range photos {
-			stream_photos = append(stream_photos, elemento)
-		}
+		stream_photos = append(stream_photos, photos...)
+
 	}
 
 	// ! Ora raccolgo tutti i commenti di ogni singola photo

@@ -30,20 +30,14 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	like_id, _ := strconv.Atoi(ps.ByName("like_id"))
-	if err != nil {
-		ctx.Logger.WithError(err).Error("put-like: Error conversion")
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	/*
+		like_id, _ := strconv.Atoi(ps.ByName("like_id"))
+		if err != nil {
+			ctx.Logger.WithError(err).Error("put-like: Error conversion")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}*/
 	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
-
-	// ! Login
-	if like_id != requestingUserId {
-		ctx.Logger.WithError(errors.New("unauthorized")).Error("put-like: error")
-		w.WriteHeader(http.StatusForbidden)
-		return
-	}
 
 	// Controllo se l'utente è bloccato
 	banned, err := rt.db.CheckBan(

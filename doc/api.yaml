@@ -38,12 +38,20 @@ servers:
 components:
   #QUI ANDRÒ AD INSERIRE LE RESPONSE TOTALI CHE POSSO AVERE COSÌ DA RIUTILIZZARE IL CODICE
   responses:
-    profile_found:
-      description: Utente trovato
+    Users_list:
+      description: Utenti che corrispondono alla query dell'utentr
       content:
         applicarion/json:
           schema:
             $ref: "#/components/schemas/Users_list"
+
+    profile_found:
+      description: profilo dell'utente cercato
+      content:
+        applicarion/json:
+          schema:
+            $ref: "#/components/schemas/Profile"
+      
 
     user_created:
       description: Utente Creato correttamente
@@ -398,16 +406,25 @@ components:
         user_nickname:
           $ref: "#/components/schemas/User_nickname"
         followers:
-          $ref: "#/components/schemas/Users_list"
+          description: Numero dei follower del profilo
+          type: integer
+          minimum: 0
+          maximum: 1000
+          readOnly: true
         following:
-          $ref: "#/components/schemas/Users_list"
+          description: Numero dei seguiti del profilo
+          type: integer
+          minimum: 0
+          maximum: 1000
+          readOnly: true
         photos:
           description: Array di ID di Photo
           type: array
           minItems: 0
           maxItems: 50
           items:
-            $ref: "#/components/schemas/Photo_id"
+            $ref: "#/components/schemas/Photo"
+          
 
 paths:
   /session:
@@ -452,14 +469,14 @@ paths:
       tags:
         - user
       summary: Ricerca dell'utente attraverso le query
-      operationId: getUserProfile
+      operationId: searchUsers
 
       parameters:
         - $ref: "#/components/parameters/user_query_id"
 
       responses:
         "200":
-          $ref: "#/components/responses/profile_found"
+          $ref: "#/components/responses/Users_list"
         "403":
           $ref: "#/components/responses/forbidden"
         "404":
@@ -470,28 +487,29 @@ paths:
       security:
         - bearerAuth: []
 
-    #CREO UN NUOVO UTENTE
-    post:
-      tags:
-        - user
-      summary: Creo un nuovo utente
-      operationId: createUser
-
-      requestBody:
-        description: Dati per creare una nuova risorsa sul server
-        required: true
-        content:
-          applicarion/json:
-            schema: { $ref: "#/components/schemas/User" }
-
-      responses:
-        "201":
-          $ref: "#/components/responses/user_created"
-
   /Users/{user_id}:
     description: Questo path rappresenta un singolo utente. Dato il suo ID
     parameters:
       - $ref: "#/components/parameters/user_id"
+
+    get:
+      tags:
+        - user
+      summary: Ottenere il profilo dell'utente cercato
+      operationId: getUserProfile
+
+      responses:
+        "200":
+          $ref: "#/components/responses/profile_found"
+        "403":
+          $ref: "#/components/responses/forbidden"
+        "404":
+          $ref: "#/components/responses/not_found"
+        "500":
+          $ref: "#/components/responses/Unexpected_condition"
+          
+      security:
+        - bearerAuth: []
 
     #CAMBIAMO IL NICKNAME DELL'UTENTE
     put:
@@ -770,14 +788,14 @@ paths:
       security:
         - bearerAuth: []
 
-  /Users/{user_id}/Photos/{photo_id}/Likes/{like_id}:
+        
+  /Users/{user_id}/Photos/{photo_id}/Likes:
     description: path dedicato alla gestione dei like - RIcorda che abbiamo elaborato i like come se fossero un'array di Users
-
+    
     parameters:
       - $ref: "#/components/parameters/user_id"
       - $ref: "#/components/parameters/photo_id"
-      - $ref: "#/components/parameters/like_id"
-
+    
     put:
       tags:
         - like
@@ -796,6 +814,15 @@ paths:
           $ref: "#/components/responses/Unexpected_condition"
       security:
         - bearerAuth: []
+
+
+  /Users/{user_id}/Photos/{photo_id}/Likes/{like_id}:
+    description: path dedicato alla gestione dei like - RIcorda che abbiamo elaborato i like come se fossero un'array di Users
+
+    parameters:
+      - $ref: "#/components/parameters/user_id"
+      - $ref: "#/components/parameters/photo_id"
+      - $ref: "#/components/parameters/like_id"
 
     delete:
       tags:

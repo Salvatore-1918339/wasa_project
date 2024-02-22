@@ -46,7 +46,9 @@ type AppDatabase interface {
 	FollowUser(User, User) error
 
 	//GET
-	GetNickname(int) (User, error)
+	GetNickname(int) (string, error)
+	GetNumberFollower(int) (int, error)
+	GetNumberFollowed(int) (int, error)
 	SearchUser(string) ([]User, error)
 
 	//DELETE

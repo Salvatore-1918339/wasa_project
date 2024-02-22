@@ -49,8 +49,8 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 
 	// ! Eseguo la query di Follow
 	err = rt.db.FollowUser(
-		User{User_id: userToFollowId}.toDataBase(),
-		User{User_id: userId}.toDataBase())
+		User{User_id: userId}.toDataBase(),
+		User{User_id: userToFollowId}.toDataBase())
 	if err != nil {
 		ctx.Logger.WithError(err).Error("put-follow: error executing insert query")
 		w.WriteHeader(http.StatusInternalServerError)

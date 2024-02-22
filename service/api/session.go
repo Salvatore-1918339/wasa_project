@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -34,6 +33,11 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 
 	// ! Controlla se l'utente è già presebnte nel DB
 	err = rt.db.CreateUser(user.toDataBase())
+	if err != nil {
+		w.WriteHeader(http.StatusOK) // L'utente esisteva già nel DB
+		_ = json.NewEncoder(w).Encode(user)
+		return
+	}
 
 	// ! prendo l'ID Salvato nel DB
 	id, err_fu := rt.db.FindUserId(user.toDataBase())
@@ -42,23 +46,11 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 	user.User_id = id // Cambio l'ID dentro la variabile user
-
-	if err != nil { // ? Se err di CreateUser() != nil
-		w.WriteHeader(http.StatusCreated) // L'utente esisteva già nel DB
-		err = json.NewEncoder(w).Encode(user)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			ctx.Logger.WithError(err).Error("session: can't create response json")
-		}
-		return
-	}
 
 	// ! Creo la cartella del nuovo Utente
 	CreateFolder(strconv.Itoa(id), ctx)
 
-	// ! 201
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(user)
 	if err != nil {
@@ -68,33 +60,27 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 	}
 }
 
-func CreateFolder(id string, ctx reqcontext.RequestContext) error {
+func CreateFolder(id string, ctx reqcontext.RequestContext) {
 	// VEDI DI TROVARE UNA SOLUZIONE MIGLIORE PER RISOLVERE QUESTO PROBLEMA
 	err := os.Mkdir("/tmp/media", os.ModePerm)
 	if err != nil && !os.IsExist(err) {
-		// Gestisci altri errori
-		fmt.Printf("Errore durante la creazione della directory: %v\n", err)
-		return err
+		ctx.Logger.WithError(err).Error("Session : Error creating /tmp/media")
+		return
 	}
 	path := filepath.Join("/tmp/media", id)
 	err = os.Mkdir(path, os.ModePerm)
 	if err != nil && os.IsExist(err) {
-		fmt.Print("La directory esiste già. SEZ[1]\n")
+		ctx.Logger.WithError(err).Error("Session : /tmp/media/{id} it already exists")
 	} else if err != nil {
-		// Gestisci altri errori
-		fmt.Printf("Errore durante la creazione della directory: %v\n", err)
-		return err
+		ctx.Logger.WithError(err).Error("Session : Error creating /tmp/media/{id}")
+		return
 	}
 	path = filepath.Join(path, "photos")
 	err = os.Mkdir(path, os.ModePerm)
 	if err != nil && os.IsExist(err) {
-		fmt.Print("La directory esiste già. SEZ[2]\n")
+		ctx.Logger.WithError(err).Error("Session : /tmp/media/{id}/photo/ it already exists")
 	} else if err != nil {
-		// Gestisci altri errori
-		fmt.Printf("Errore durante la creazione della directory: %v\n", err)
-		return err
+		ctx.Logger.WithError(err).Error("Session : Error creating /tmp/media/{id}/photo/")
+		return
 	}
-
-	return nil
-
 }

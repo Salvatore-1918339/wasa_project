@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -9,15 +8,13 @@ import (
 func (db *appdbimpl) CreateUser(u User) error {
 
 	// Eseguiamo una INSERT nel DB
-	result, err := db.c.Exec("INSERT INTO Users(nickname) VALUES (?)", u.Nickname)
+	_, err := db.c.Exec("INSERT INTO Users(nickname) VALUES (?)", u.Nickname)
 
 	// Gestione degli errori
 	if err != nil {
 		return err
 	}
 
-	UserId, err := result.LastInsertId()
-	fmt.Print("\n Id Assegnato nel DB : ", UserId)
 	return nil
 
 }

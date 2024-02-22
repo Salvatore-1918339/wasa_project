@@ -50,11 +50,11 @@ type Complete_Photo struct {
 }
 
 type Profile struct {
-	User_id   int      `json:"user_id"`
-	Nickname  string   `json:"nickname"`
-	Follower  int      `json:"n_follower"`
-	Following int      `json:"n_following"`
-	Photo     Photo_id `json:"photos"`
+	User_id   int                       `json:"user_id"`
+	Nickname  string                    `json:"nickname"`
+	Follower  int                       `json:"n_follower"`
+	Following int                       `json:"n_following"`
+	Posts     []database.Complete_Photo `json:"posts"`
 }
 
 type Photo_id struct {
