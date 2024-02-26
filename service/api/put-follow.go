@@ -10,7 +10,6 @@ import (
 )
 
 func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	// TODO - DEVI CONTROLLARE L'AUTHENTICATION
 
 	// ? trasformo in interi
 	userId, err := strconv.Atoi(ps.ByName("id"))
@@ -19,7 +18,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	userToFollowId, _ := strconv.Atoi(ps.ByName("follower_id"))
+	userToFollowId, err := strconv.Atoi(ps.ByName("follower_id"))
 	if err != nil {
 		ctx.Logger.WithError(err).Error("put-follow: error conversion follower_id")
 		w.WriteHeader(http.StatusBadRequest)
@@ -29,14 +28,19 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	// ! Login
 	requestingUserId_str, err := extractBearerToken(r, w)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusForbidden)
 		ctx.Logger.WithError(err).Error("put-follow: Error")
 		return
 	}
-	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
-	if userId != requestingUserId {
-		ctx.Logger.WithError(errors.New("unauthorized")).Error("put-follow: error")
-		w.WriteHeader(http.StatusForbidden)
+	requestingUserId, err := strconv.Atoi(requestingUserId_str)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-nickname: error converting requesingUserId")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if requestingUserId != userId {
+		ctx.Logger.WithError(errors.New("only the User can put a Followe")).Error("put-follow: Error")
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
@@ -44,6 +48,18 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	if userId == userToFollowId {
 		ctx.Logger.WithError(errors.New("the user cannot follow himself")).Error("put-follow: Error")
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// ! Controllo se c'è gia nel DB
+	exist, err := rt.db.Checkfollow(userId, userToFollowId)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-follower : error executing Checkfollow")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if exist {
+		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 

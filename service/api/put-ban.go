@@ -16,15 +16,30 @@ func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	banned, err := strconv.Atoi(ps.ByName("banned_user_id"))
+	user_id, err := strconv.Atoi(ps.ByName("banned_user_id"))
 	if err != nil {
 		ctx.Logger.WithError(err).Error("putBan: error conversion")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
+	// ! Login
+	requestingUserId_str, err := extractBearerToken(r, w)
+	if err != nil {
+		w.WriteHeader(http.StatusForbidden)
+		ctx.Logger.WithError(err).Error("put-ban: Error extractBearerToken")
+		return
+	}
+	requestingUserId, err := strconv.Atoi(requestingUserId_str)
+
+	if requestingUserId != banner {
+		w.WriteHeader(http.StatusUnauthorized)
+		ctx.Logger.WithError(err).Error("put-ban: Error Unauthorized")
+		return
+	}
+
 	// Controllo se gli ID sono uguali
-	if banner == banned {
+	if banner == user_id {
 		ctx.Logger.WithError(errors.New("the user cannot ban himself")).Error("putBan: error")
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -33,7 +48,7 @@ func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.
 	// ! Eseguo il Ban
 	err = rt.db.BanUser(
 		User{User_id: banner}.toDataBase(),
-		User{User_id: banned}.toDataBase())
+		User{User_id: user_id}.toDataBase())
 
 	if err != nil {
 		ctx.Logger.WithError(err).Error("putBan: Error executing the query")
@@ -41,15 +56,15 @@ func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.
 		return
 	}
 
-	// ? TOLGO IL FOLLOW DA ENTRAMBI
+	// ! TOLGO IL FOLLOW DA ENTRAMBI
 	err = rt.db.UnFollowUser(
 		User{User_id: banner}.toDataBase(),
-		User{User_id: banned}.toDataBase())
+		User{User_id: user_id}.toDataBase())
 
 	if err != nil {
 		ctx.Logger.WithError(err).Error("putBan: error executing the unfollow query")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
+	w.WriteHeader(http.StatusNoContent)
 }

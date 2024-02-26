@@ -13,23 +13,34 @@ import (
 
 func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	photoOwnerId_str := ps.ByName("id")
-	photoId_str := ps.ByName("photo_id")
-	requestingUserId_str, err := extractBearerToken(r, w)
-
-	// Controllo errore dall'estrazione del TOKEN
+	photoOwnerId, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		ctx.Logger.WithError(err).Error("commentPhoto: Error")
+		ctx.Logger.WithError(err).Error("comment-photo: error converting id")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	photo_id, err := strconv.Atoi(ps.ByName("photo_id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("comment-photo: error converting photo_id")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	// Converto i Valori ID in Interi
-	photoOwnerId, _ := strconv.Atoi(photoOwnerId_str)
-	photo_id, _ := strconv.Atoi(photoId_str)
-	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
+	// ! login
+	requestingUserId_str, err := extractBearerToken(r, w)
+	if err != nil {
+		w.WriteHeader(http.StatusForbidden)
+		ctx.Logger.WithError(err).Error("comment-Photo: Error")
+		return
+	}
+	requestingUserId, err := strconv.Atoi(requestingUserId_str)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("comment-photo: error converting requestingUser_id")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	// Controllo se l'utente è bloccato
+	// ! Controllo se l'utente è bloccato
 	banned, err := rt.db.CheckBan(
 		User{User_id: requestingUserId}.toDataBase(),
 		User{User_id: photoOwnerId}.toDataBase())
@@ -59,7 +70,6 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	// ! Aggiungo il commento nel DB
-
 	currentTime := time.Now()
 	datetime := currentTime.Format("2006-01-02 15:04:05")
 
@@ -68,7 +78,6 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		Photo_id{Photo_id: photo_id}.toDataBase(),
 		comment.Comment_string,
 		datetime)
-
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		ctx.Logger.WithError(err).Error("post-Comment: failed executing query CreateComment ")
@@ -76,7 +85,6 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	w.WriteHeader(http.StatusCreated)
-
 	// ! RITORNO L'ID DELL'COMMENTO
 	err = json.NewEncoder(w).Encode(Comment_id{Comment_id: comment_id})
 	if err != nil {
@@ -84,5 +92,4 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		ctx.Logger.WithError(err).Error("post-comment/Encode: failed convert photo_id to int64")
 		return
 	}
-
 }

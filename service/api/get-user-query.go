@@ -19,7 +19,6 @@ import (
 
 func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	w.Header().Set("Content-Type", "application/json")
 	queryStr := r.URL.Query().Get("user_query_id") // Prendo il Nickname
 
 	// ! Controllo che abbia fatto l'accesso

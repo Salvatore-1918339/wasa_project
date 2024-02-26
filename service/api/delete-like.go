@@ -10,43 +10,53 @@ import (
 )
 
 func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	userId_str := ps.ByName("id")
-	photoId_str := ps.ByName("photo_id")
-	likeId_str := ps.ByName("like_id")
-	requestingUserId_str, err := extractBearerToken(r, w)
 
-	// Controllo errore dall'estrazione del TOKEN
+	user_id, err := strconv.Atoi(ps.ByName("id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("delete-like: Error conversion")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	photo_id, err := strconv.Atoi(ps.ByName("photo_id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("delete-like: Error conversion")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	like_id, err := strconv.Atoi(ps.ByName("like_id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("delete-like: Error conversion")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// ! Login
+	requestingUserId_str, err := extractBearerToken(r, w)
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		ctx.Logger.WithError(err).Error("commentPhoto: Error")
 		return
 	}
-
-	// Converto i Valori ID in Interi
-	user_id, _ := strconv.Atoi(userId_str)
-	photo_id, _ := strconv.Atoi(photoId_str)
-	like_id, _ := strconv.Atoi(likeId_str)
 	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
-
-	// Controllo che l'utente che mette like sia quello auth
+	// ? Controllo che l'utente che toglie like sia quello auth
 	if like_id != requestingUserId {
 		ctx.Logger.WithError(errors.New("non sei autorizzato ad eseguire questa operazione")).Error("Impossibile eseguire l'operazione")
-		w.WriteHeader(http.StatusForbidden) //errore 403
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	// Controllo se l'utente è bloccato
+	// ! Controllo se l'utente è bloccato
 	banned, err := rt.db.CheckBan(
 		User{User_id: requestingUserId}.toDataBase(),
 		User{User_id: user_id}.toDataBase())
 	if err != nil {
 		ctx.Logger.WithError(err).Error("delete-comment: Error in CheckBan")
-		w.WriteHeader(http.StatusInternalServerError) //errore 500
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if banned {
 		ctx.Logger.WithError(errors.New("l'utente è bloccato")).Error("impossibile eseguire l'operazione")
-		w.WriteHeader(http.StatusForbidden) //errore 403
+		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 
@@ -56,9 +66,9 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		User{User_id: requestingUserId}.toDataBase())
 	if err != nil {
 		ctx.Logger.WithError(err).Error("error in DeleteLIke: error executing query ")
-		w.WriteHeader(http.StatusInternalServerError) //errore 403
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent) // 204
+	w.WriteHeader(http.StatusNoContent)
 }

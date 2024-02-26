@@ -1,7 +1,5 @@
 package database
 
-import "fmt"
-
 func (db *appdbimpl) FindPhotos(user User) ([]Complete_Photo, error) {
 	queryRes, err := db.c.Query("SELECT photo_id, timestamp FROM Photo WHERE owner=?", user.User_id)
 	if err != nil {
@@ -24,7 +22,7 @@ func (db *appdbimpl) FindPhotos(user User) ([]Complete_Photo, error) {
 		var comments []Comment
 		comments, err := db.FindComment(Photo_id{Photo_id: photo.Photo_id})
 		if err != nil {
-			fmt.Print("FindPhotos : error in find Comment")
+			return nil, err
 		}
 		photo.Comments = append(photo.Comments, comments...)
 
@@ -32,7 +30,7 @@ func (db *appdbimpl) FindPhotos(user User) ([]Complete_Photo, error) {
 		var likes []User_id
 		likes, err = db.FindLikes(Photo_id{Photo_id: photo.Photo_id})
 		if err != nil {
-			fmt.Print("FindPhotos : error in find like")
+			return nil, err
 		}
 		photo.Likes = append(photo.Likes, likes...)
 		photos = append(photos, photo)

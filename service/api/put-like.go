@@ -10,14 +10,6 @@ import (
 )
 
 func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	requestingUserId_str, err := extractBearerToken(r, w)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		ctx.Logger.WithError(err).Error("put-like: Error extract token")
-		return
-	}
-
-	// Converto i Valori ID in Interi
 	user_id, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
 		ctx.Logger.WithError(err).Error("put-like: Error conversion")
@@ -30,16 +22,22 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	/*
-		like_id, _ := strconv.Atoi(ps.ByName("like_id"))
-		if err != nil {
-			ctx.Logger.WithError(err).Error("put-like: Error conversion")
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}*/
-	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
 
-	// Controllo se l'utente è bloccato
+	// ! Login
+	requestingUserId_str, err := extractBearerToken(r, w)
+	if err != nil {
+		w.WriteHeader(http.StatusForbidden)
+		ctx.Logger.WithError(err).Error("put-like: Error extract token")
+		return
+	}
+	requestingUserId, err := strconv.Atoi(requestingUserId_str)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-like: Error conversion")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// ! Controllo se l'utente è bloccato
 	banned, err := rt.db.CheckBan(
 		User{User_id: requestingUserId}.toDataBase(),
 		User{User_id: user_id}.toDataBase())
@@ -50,6 +48,18 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 	if banned {
 		ctx.Logger.WithError(errors.New("the User is banned")).Error("put-like: Error")
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	// ! Controllo che non ci sia già un like
+	exist, err := rt.db.Checklike(photo_id, requestingUserId)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-like : error executing Checkfollow")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if exist {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}

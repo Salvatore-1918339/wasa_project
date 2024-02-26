@@ -315,17 +315,7 @@ components:
           pattern: "^.*?$"
           description: commento
           example: "Meravigliosa questa foto! InstaLovva!"
-        comment_owner:
-          $ref: "#/components/schemas/User_id/properties/user_id"
-        comment_timespamp:
-          $ref: "#/components/schemas/Timestamp"
-        comment_identifier:
-          $ref: "#/components/schemas/Comment_id/properties/id_code"
-      example:
-        comment_string: "Meravigliosa questa foto!"
-        comment_owner: 2
-        comment_timespamp: "2023-11-02T14:30:00Z"
-        comment_identifier: 1234
+
 
     Image:
       description: Oggetto che rappresenta un'immagine
@@ -501,10 +491,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/profile_found"
+        "400":
+          $ref: "#/components/responses/bad_request"
         "403":
           $ref: "#/components/responses/forbidden"
-        "404":
-          $ref: "#/components/responses/not_found"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
           
@@ -557,6 +547,8 @@ paths:
           $ref: "#/components/responses/stream_response"
         "401":
           $ref: "#/components/responses/unauthorized"
+        "403": 
+          $ref: "#/components/responses/forbidden"
         "404":
           $ref: "#/components/responses/not_found"
         "500":
@@ -580,10 +572,10 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/no_content"
+        "400": 
+          $ref: "#/components/responses/bad_request"
         "401":
           $ref: "#/components/responses/unauthorized"
-        "403":
-          $ref: "#/components/responses/forbidden"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:
@@ -600,8 +592,6 @@ paths:
           $ref: "#/components/responses/no_content"
         "401":
           $ref: "#/components/responses/unauthorized"
-        "403":
-          $ref: "#/components/responses/forbidden"
         "404":
           $ref: "#/components/responses/not_found"
         "500":
@@ -625,12 +615,10 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/no_content"
+        "400":
+          $ref: "#/components/responses/bad_request"
         "401":
           $ref: "#/components/responses/unauthorized"
-        "403":
-          $ref: "#/components/responses/forbidden"
-        "404":
-          $ref: "#/components/responses/not_found"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:
@@ -646,12 +634,10 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/no_content"
+        "400":
+          $ref: "#/components/responses/bad_request"
         "401":
           $ref: "#/components/responses/unauthorized"
-        "403":
-          $ref: "#/components/responses/forbidden"
-        "404":
-          $ref: "#/components/responses/not_found"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:
@@ -678,8 +664,12 @@ paths:
       responses:
         "201":
           $ref: "#/components/responses/image_uploaded"
+        "400":
+          $ref: "#/components/responses/bad_request"
         "401":
           $ref: "#/components/responses/unauthorized"
+        "403": 
+          $ref: "#/components/responses/forbidden"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:
@@ -701,10 +691,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/photo"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/not_found"
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "403": 
+          $ref: "#/components/responses/forbidden"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:
@@ -720,8 +710,12 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/no_content"
+        "400":
+          $ref: "#/components/responses/bad_request"
         "401":
           $ref: "#/components/responses/unauthorized"
+        "403": 
+          $ref: "#/components/responses/forbidden"
         "404":
           $ref: "#/components/responses/not_found"
         "500": 
@@ -753,10 +747,10 @@ paths:
       responses:
         "201":
           $ref: "#/components/responses/comment_added"
-        "401":
-          $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/not_found"
+        "400":
+          $ref: "#/components/responses/bad_request"
+        "403": 
+          $ref: "#/components/responses/forbidden"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:
@@ -779,10 +773,12 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/no_content"
+        "400":
+          $ref: "#/components/responses/bad_request"
         "401":
           $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/not_found"
+        "403": 
+          $ref: "#/components/responses/forbidden"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:
@@ -806,10 +802,10 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/no_content"
+        "400":
+          $ref: "#/components/responses/bad_request"          
         "403":
           $ref: "#/components/responses/forbidden"
-        "404":
-          $ref: "#/components/responses/not_found"
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:
@@ -833,10 +829,12 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/no_content"
+        "400":
+          $ref: "#/components/responses/bad_request"                
         "401":
           $ref: "#/components/responses/unauthorized"
-        "404":
-          $ref: "#/components/responses/not_found"
+        "403":
+          $ref: "#/components/responses/forbidden"          
         "500":
           $ref: "#/components/responses/Unexpected_condition"
       security:

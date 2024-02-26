@@ -60,6 +60,8 @@ type AppDatabase interface {
 
 	//SPECIALE
 	FindUserId(User) (int, error) // Trova nel DB l'utente per farmi tornare il suo ID
+	Checkfollow(int, int) (bool, error)
+	Checklike(int, int) (bool, error)
 	CheckBan(User, User) (bool, error)
 	FindCommentOwner(Comment_id) (int, error)
 	GetFollowing(User) ([]int, error)

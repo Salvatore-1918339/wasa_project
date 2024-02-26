@@ -3,7 +3,6 @@ package api
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"image/jpeg"
 	"io"
 	"net/http"
@@ -16,25 +15,31 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) PostPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	w.Header().Set("Content-Type", "application/json")
-
-	user_id_str := ps.ByName("id")
-	requestingUserId_str, err := extractBearerToken(r, w)
-	// Controllo errore dall'estrazione del TOKEN
+	user_id, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		ctx.Logger.WithError(err).Error("GetNIcknameHandler: Error")
+		ctx.Logger.WithError(err).Error("Post-photo: error converting id")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	user_id, _ := strconv.Atoi(user_id_str)
-	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
+	// ! Login
+	requestingUserId_str, err := extractBearerToken(r, w)
+	if err != nil {
+		w.WriteHeader(http.StatusForbidden)
+		ctx.Logger.WithError(err).Error("Post-Photo: Error")
+		return
+	}
+	requestingUserId, err := strconv.Atoi(requestingUserId_str)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("Post-photo: error converting id")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	// ! check Login
 	if user_id != requestingUserId {
-		w.WriteHeader(http.StatusForbidden) // 403
+		w.WriteHeader(http.StatusUnauthorized)
 		ctx.Logger.WithError(errors.New("you aren't allowed to use this operation")).Error("post-photo: Error")
 		return
 	}
@@ -43,7 +48,7 @@ func (rt *_router) PostPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("photo-upload: error reading body content")
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -63,6 +68,7 @@ func (rt *_router) PostPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	PhotoId, err := rt.db.CreatePhoto(id_user, datetime) //Prendo l'id della Photo
 	if err != nil {
 		ctx.Logger.WithError(err).Error("photo-upload: Error in CreatePhoto DB")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -70,7 +76,7 @@ func (rt *_router) PostPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 
 	// Prendo l'PATH delle PHOTO dell'User
 	path := filepath.Join("/tmp", "media", ps.ByName("id"), "photos") // /tmp/media/:id/photos
-	fmt.Print(filepath.Join("\n\nUpload photo: ", path, strPhotoId+".jpg"))
+
 	// Creo un nuovo file dentro la cartella foto del Utente
 	outputFile, err := os.Create(filepath.Join(path, strPhotoId+".jpg"))
 	if err != nil {
@@ -87,6 +93,7 @@ func (rt *_router) PostPhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	outputFile.Close()
+	w.WriteHeader(http.StatusCreated)
 
 }
 

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -10,37 +9,30 @@ import (
 )
 
 func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	user_id_str := ps.ByName("id")
-	photo_id_str := ps.ByName("photo_id")
-	comment_id_str := ps.ByName("comment_id")
-	requestingUserId_str, err := extractBearerToken(r, w)
+	user_id, err := strconv.Atoi(ps.ByName("id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("uncomment-photo: error converting id")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	comment_id, err := strconv.Atoi(ps.ByName("comment_id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("uncomment-photo: error converting comment_id")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	// Controllo errore dall'estrazione del TOKEN
+	// ! Login
+	requestingUserId_str, err := extractBearerToken(r, w)
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		ctx.Logger.WithError(err).Error("uncommentPhoto: Error")
 		return
 	}
-
-	// Trasformo in interi
-	user_id, _ := strconv.Atoi(user_id_str)
-	photo_id, _ := strconv.Atoi(photo_id_str)
-	comment_id, _ := strconv.Atoi(comment_id_str)
-	requestingUser_id, _ := strconv.Atoi(requestingUserId_str)
-
-	// ! Controllo se l'Utente è bannato
-	banned, err := rt.db.CheckBan(
-		User{User_id: requestingUser_id}.toDataBase(), // ? User che potrebbe essere bannato
-		User{User_id: photo_id}.toDataBase())          // ? Owner della photo
+	requestingUser_id, err := strconv.Atoi(requestingUserId_str)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("delete-comment: Error in CheckBan")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	if banned {
-		ctx.Logger.WithError(errors.New("l'utente è bloccato")).Error("Impossibile eseguire l'operazione")
-		w.WriteHeader(http.StatusForbidden) //errore 403
+		ctx.Logger.WithError(err).Error("comment-photo: error converting requestingUserId")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -52,9 +44,9 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 		return
 	}
 	// TODO - RICONTROLLA QUESTO IF QUI SOTTO: E' SBAGLIATO D:
-	if requestingUser_id != user_id || requestingUser_id != owner {
+	if requestingUser_id != user_id && requestingUser_id != owner {
 		ctx.Logger.WithError(err).Error("delete-comment: access denied")
-		w.WriteHeader(http.StatusForbidden)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 

@@ -10,25 +10,32 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) PutNickname(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	user_id_str := ps.ByName("id")
-	requestingUserId_str, err := extractBearerToken(r, w)
-
-	// Controllo errore dall'estrazione del TOKEN
+	user_id, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		ctx.Logger.WithError(err).Error("GetNIcknameHandler: Error")
+		ctx.Logger.WithError(err).Error("put-nickname: error converting id")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	user_id, _ := strconv.Atoi(user_id_str)
-	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
-
 	// ! Login
-	if user_id != requestingUserId {
+	requestingUserId_str, err := extractBearerToken(r, w)
+	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
-		ctx.Logger.WithError(errors.New("you aren't allowed to use this operation")).Error("putNickname: Error")
+		ctx.Logger.WithError(err).Error("put-nickname: Error")
+		return
+	}
+	requestingUserId, err := strconv.Atoi(requestingUserId_str)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-nickname: error converting requesingUserId")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if user_id != requestingUserId {
+		w.WriteHeader(http.StatusUnauthorized)
+		ctx.Logger.WithError(errors.New("you aren't allowed to use this operation")).Error("put-Nickname: Error")
 		return
 	}
 
@@ -36,11 +43,11 @@ func (rt *_router) PutNickname(w http.ResponseWriter, r *http.Request, ps httpro
 	var newNickname Nickname
 	err = json.NewDecoder(r.Body).Decode(&newNickname)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("update-nickname: error decoding json")
-		w.WriteHeader(http.StatusBadRequest) // Errore 400
+		ctx.Logger.WithError(err).Error("put-nickname: error decoding json")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	} else if !validIdentifier(newNickname.Nickname) {
-		ctx.Logger.WithError(errors.New("nickname provided does not meet the necessary conditions")).Error("update-nickname: Error in Nickname section")
+		ctx.Logger.WithError(errors.New("nickname provided does not meet the necessary conditions")).Error("put-nickname: Error in Nickname section")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -48,11 +55,10 @@ func (rt *_router) PutNickname(w http.ResponseWriter, r *http.Request, ps httpro
 	// ! richiamo changeNickname del DB
 	err = rt.db.ChangeNickname(User{User_id: user_id}.toDataBase(), newNickname.Nickname)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("update-nickname: Error executing query")
+		ctx.Logger.WithError(err).Error("put-nickname: Error executing query")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	// risponde con 204 http status
 	w.WriteHeader(http.StatusNoContent)
 }

@@ -20,7 +20,6 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 	// Prende Utente passato in r
 	var user User
 	err := json.NewDecoder(r.Body).Decode(&user)
-	// fmt.Print("\n#!# UTENTE PASSATO : ", user.Nickname)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -46,6 +45,7 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	user.User_id = id // Cambio l'ID dentro la variabile user
 
 	// ! Creo la cartella del nuovo Utente
@@ -61,7 +61,6 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 }
 
 func CreateFolder(id string, ctx reqcontext.RequestContext) {
-	// VEDI DI TROVARE UNA SOLUZIONE MIGLIORE PER RISOLVERE QUESTO PROBLEMA
 	err := os.Mkdir("/tmp/media", os.ModePerm)
 	if err != nil && !os.IsExist(err) {
 		ctx.Logger.WithError(err).Error("Session : Error creating /tmp/media")

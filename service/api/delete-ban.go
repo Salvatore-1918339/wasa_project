@@ -13,37 +13,37 @@ func (rt *_router) deleteBan(w http.ResponseWriter, r *http.Request, ps httprout
 	banner, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
 		ctx.Logger.WithError(err).Error("delete-ban: error with string conversion id")
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	user_id, err := strconv.Atoi(ps.ByName("banned_user_id"))
 	if err != nil {
 		ctx.Logger.WithError(err).Error("delete-ban: error with string conversion banned_user_id")
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
+	// ! Login
 	requestingUserId_str, err := extractBearerToken(r, w)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusForbidden)
 		ctx.Logger.WithError(err).Error("delete-ban: Error extract token")
 		return
 	}
 	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
 
-	// ! Login
 	if banner != requestingUserId {
 		ctx.Logger.WithError(errors.New("unauthorized")).Error("delete-ban: error")
-		w.WriteHeader(http.StatusForbidden)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	//Eseguiamo la query
+	// ! Eseguiamo la query
 	err = rt.db.UnBanUser(banner, user_id)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("deleteBan: Error executing the query")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
+	w.WriteHeader(http.StatusNoContent)
 }

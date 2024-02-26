@@ -10,18 +10,28 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) getUserPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	user_id, _ := strconv.Atoi(ps.ByName("id"))
+	user_id, err := strconv.Atoi(ps.ByName("id"))
+	if err != nil {
+		ctx.Logger.WithError(err).Error("get-photo: error converting id")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// ! Login
 	requestingUserId_str, err := extractBearerToken(r, w)
-	// Controllo errore dall'estrazione del TOKEN
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		ctx.Logger.WithError(err).Error("get-photo: Error")
 		return
 	}
-
-	requestingUserId, _ := strconv.Atoi(requestingUserId_str)
+	requestingUserId, err := strconv.Atoi(requestingUserId_str)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("get-photo: error converting requesingUserId")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	// ! Controllo se bannato
 	banned, err := rt.db.CheckBan(
@@ -29,17 +39,18 @@ func (rt *_router) getUserPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		User{User_id: user_id}.toDataBase())
 	if err != nil {
 		ctx.Logger.WithError(err).Error("get-photo: Error")
-		w.WriteHeader(http.StatusForbidden) //errore 403
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if banned {
 		ctx.Logger.WithError(errors.New("l'utente è bloccato")).Error("get-profile: Impossibile eseguire l'operazione")
-		w.WriteHeader(http.StatusForbidden) //errore 403
+		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 
 	file := ps.ByName("photo_id") + ".jpg"
 	path := filepath.Join("/tmp", "media", ps.ByName("id"), "photos", file)
 	http.ServeFile(w, r, path)
+	w.WriteHeader(http.StatusOK)
 
 }

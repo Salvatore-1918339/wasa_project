@@ -3,8 +3,8 @@ package api
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/Salvatore-1918339/wasa_project/service/api/reqcontext"
@@ -40,7 +40,6 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 		ctx.Logger.WithError(err).Error("getMyStream: Error executing GetFollowing ")
 		return
 	}
-	fmt.Print("\nEcco gli Utenti che Segui: ", users_following)
 
 	// ! Prendo tutte le photo degli utenti che seguo
 	var stream_photos []database.Complete_Photo
@@ -70,7 +69,6 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// ! Ora raccolgo i Like delle singole Photo
 	for i := 0; i < len(stream_photos); i++ {
-		fmt.Print("stream di Photo:", stream_photos[i].Photo_id)
 		likes, err := rt.db.FindLikes(Photo_id{Photo_id: stream_photos[i].Photo_id}.toDataBase())
 
 		if err != nil {
@@ -80,7 +78,12 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 		}
 		stream_photos[i].Likes = likes
 	}
-	fmt.Print("\n\nSTREAM", stream_photos)
+
+	// ! Ordinamento per data
+	sort.SliceStable(stream_photos, func(i, j int) bool {
+		return stream_photos[i].Timestamp.After(stream_photos[j].Timestamp)
+	})
+
 	w.WriteHeader(http.StatusOK)
 	// manda l'output all'utente.
 	_ = json.NewEncoder(w).Encode(stream_photos)
