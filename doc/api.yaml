@@ -51,14 +51,6 @@ components:
         applicarion/json:
           schema:
             $ref: "#/components/schemas/Profile"
-      
-
-    user_created:
-      description: Utente Creato correttamente
-      content:
-        applicarion/json:
-          schema:
-            $ref: "#/components/schemas/User"
 
     stream_response:
       description: Questo responses contiene la lista di foto dello stream dell'utente
@@ -221,6 +213,7 @@ components:
       type: object
       properties:
         username:
+          description: Username dell'utente
           type: string
           minLength: 5
           maxLength: 25
@@ -290,6 +283,8 @@ components:
         users:
           description: Lista di utenti
           type: array
+          minItems: 0
+          maxItems: 20
           items:
             $ref: "#/components/schemas/User"
           example:
@@ -301,6 +296,8 @@ components:
     Timestamp:
       description: Rappresentazione Data-Ora nel seguente formato "gg/mm/aa"-"oo-mm-ss"
       type: string
+      minLength: 0
+      maxLength: 32
       format: date-time
       example: "2023-11-02T14:30:00Z"
 
@@ -309,11 +306,11 @@ components:
       type: object
       properties:
         comment_string:
+          description: Stringa effettiva delcommento
           type: string
           minLength: 1
           maxLength: 300
           pattern: "^.*?$"
-          description: commento
           example: "Meravigliosa questa foto! InstaLovva!"
 
 
@@ -322,7 +319,10 @@ components:
       type: object
       properties:
         image_code:
+          description: Codice binario dell'immagine
           type: string
+          minLength: 0
+          maxLength: 10000
           format: binary
           example: "01000111101011010010" #RAPPRESENTAZIONE DI UN IMMAGINE IN BINARIO
 
@@ -347,6 +347,8 @@ components:
         likes:
           description: Array di User_id che hanno messo 'like' alla photo
           type: array
+          minItems: 0
+          maxItems: 100
           #NON importo un Limite di Like
           items:
             $ref: "#/components/schemas/User_id"
@@ -372,6 +374,8 @@ components:
         photos_list:
           description: Lista di photo
           type: array
+          minItems: 0
+          maxItems: 20
           #NON CI SONO LIMITI DI PHOTO CHE L'UTENTE PUÒ AVERE
           items:
             $ref: "#/components/schemas/Photo"
