@@ -10,7 +10,7 @@ import (
 // verifica se l'id di un utente ha la lunghezza giusta
 func validIdentifier(identifier string) bool {
 	var nospace_id = strings.ReplaceAll(identifier, " ", "")
-	//5-25 come def in API
+	// 5-25 come def in API
 	return len(identifier) >= 5 && len(identifier) <= 25 && nospace_id != "" && !strings.ContainsAny(nospace_id, "?")
 }
 

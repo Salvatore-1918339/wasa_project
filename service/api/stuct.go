@@ -30,13 +30,13 @@ type Like struct {
 	Photo_id   int
 }
 
-//Struttura User
+// Struttura User
 type User struct {
 	User_id  int    `json:"user_id"`
 	Nickname string `json:"nickname"`
 }
 
-//Struttura Photo
+// Struttura Photo
 type Complete_Photo struct {
 	Photo_id  int                `json:"photo_id"`
 	Owner     User               `json:"owner"`

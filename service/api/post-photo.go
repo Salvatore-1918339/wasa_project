@@ -54,7 +54,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Controllo il Formato della Foto
-	errFormatJpg := checkFormatJpg(io.NopCloser(bytes.NewBuffer(data))) //passo dei Bytes da consumare
+	errFormatJpg := checkFormatJpg(io.NopCloser(bytes.NewBuffer(data))) // passo dei Bytes da consumare
 	if errFormatJpg != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		ctx.Logger.WithError(errFormatJpg).Error("photo-upload: Error not supported format")
@@ -65,7 +65,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	datetime := time.Now()
 	id_user, _ := strconv.Atoi(ps.ByName("id"))
 
-	PhotoId, err := rt.db.CreatePhoto(id_user, datetime) //Prendo l'id della Photo
+	PhotoId, err := rt.db.CreatePhoto(id_user, datetime) // Prendo l'id della Photo
 	if err != nil {
 		ctx.Logger.WithError(err).Error("photo-upload: Error in CreatePhoto DB")
 		w.WriteHeader(http.StatusInternalServerError)

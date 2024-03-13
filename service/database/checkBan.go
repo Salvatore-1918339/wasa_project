@@ -17,7 +17,7 @@ func (db *appdbimpl) CheckBan(banned User, photo_owner User) (bool, error) {
 		return true, err
 	}
 	// Controllo se COUNTER è vuoto
-	if counter != 0 { //se è diverso da 0 significa che abbiamo trovato una riga, quindi è bannato
+	if counter != 0 { // se è diverso da 0 significa che abbiamo trovato una riga, quindi è bannato
 		return true, nil
 	}
 	return false, nil
