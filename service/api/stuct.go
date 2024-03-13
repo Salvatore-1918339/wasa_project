@@ -22,10 +22,6 @@ type Nickname struct {
 	Nickname string `json:"nickname"`
 }
 
-type id_user struct {
-	User_id string `json:"user_id"`
-}
-
 /*
 	Liker - Utente al quale piace una
 */

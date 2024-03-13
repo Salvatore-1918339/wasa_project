@@ -3,8 +3,13 @@ package database
 func (db *appdbimpl) SearchUser(queryStr string) ([]User, error) {
 
 	queryRes, err := db.c.Query("SELECT * FROM Users WHERE nickname LIKE ? ", "%"+queryStr+"%")
+	// ! Controllo degli errori
 	if err != nil {
+		queryRes.Close()
 		return nil, err
+	}
+	if queryRes.Err() != nil {
+		return nil, queryRes.Err()
 	}
 
 	var users []User // Creo un'array di Utenti

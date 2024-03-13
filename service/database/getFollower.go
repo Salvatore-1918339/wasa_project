@@ -4,11 +4,18 @@ func (db *appdbimpl) GetFollower(user User) ([]int, error) {
 
 	// follower : ossia User è un follower degli utenti che tornano in queryRes
 	queryRes, err := db.c.Query("SELECT * FROM Followers WHERE user_id=? ", user.User_id)
+
+	// ! Controllo degli Errori
 	if err != nil {
+		queryRes.Close()
 		return nil, err
+	}
+	if queryRes.Err() != nil {
+		return nil, queryRes.Err()
 	}
 
 	var users_follower []int // Creo un'array di Utenti
+
 	for queryRes.Next() {
 		var user_follower_id, user_id int
 		err = queryRes.Scan(&user_follower_id, &user_id) // Prendiamo i risultati ottenuti e li inseriamo nel singolo utente

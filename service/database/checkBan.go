@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 )
 
 func (db *appdbimpl) CheckBan(banned User, photo_owner User) (bool, error) {
@@ -9,7 +10,7 @@ func (db *appdbimpl) CheckBan(banned User, photo_owner User) (bool, error) {
 	err := db.c.QueryRow("SELECT 1 FROM Banned WHERE banner=? AND user_id=?", photo_owner.User_id, banned.User_id).Scan(&counter)
 
 	// ! ERRORE NON TROVA riga CHECK
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return false, nil
 	}
 	if err != nil {

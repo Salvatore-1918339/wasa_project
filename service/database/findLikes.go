@@ -2,8 +2,13 @@ package database
 
 func (db *appdbimpl) FindLikes(photo Photo_id) ([]User_id, error) {
 	queryRes, err := db.c.Query("SELECT * FROM Likes WHERE photo_id=?", photo.Photo_id)
+	// ! Controllo degli errori
 	if err != nil {
+		queryRes.Close()
 		return nil, err
+	}
+	if queryRes.Err() != nil {
+		return nil, queryRes.Err()
 	}
 
 	var users_id []User_id

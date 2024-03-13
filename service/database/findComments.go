@@ -2,8 +2,13 @@ package database
 
 func (db *appdbimpl) FindComments(photo Photo_id) ([]Comment, error) {
 	queryRes, err := db.c.Query("SELECT Comment.comment_id, Comment.photo_id, Comment.txt, Users.user_id, Users.nickname, Comment.timestamp	FROM Comment INNER JOIN Users ON Comment.owner = Users.user_id WHERE Comment.photo_id= ?;", photo.Photo_id)
+	// ! Controllo degli errori
 	if err != nil {
+		queryRes.Close()
 		return nil, err
+	}
+	if queryRes.Err() != nil {
+		return nil, queryRes.Err()
 	}
 
 	var comments []Comment // Creo un'array di Commenti

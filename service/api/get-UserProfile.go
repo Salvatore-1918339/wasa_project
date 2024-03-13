@@ -61,7 +61,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 
 	// ! Followers of the Users
 	follower, err := rt.db.GetFollower(User{User_id: user_id}.toDataBase())
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		ctx.Logger.WithError(err).Error("get-UserProfile : error executing the follower Query")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -71,7 +71,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 
 	// ! Followed number
 	num_followed, err := rt.db.GetNumberFollowed(profile.User_id)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		ctx.Logger.WithError(err).Error("get-UserProfile : error executing the number follower Query")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
