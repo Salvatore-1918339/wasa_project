@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"os"
@@ -27,6 +28,27 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 	} else if !validIdentifier(user.Nickname) {
 		ctx.Logger.WithError(err).Error("session: Can't Create a User. User nickname not Valid. <<")
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// ! Controlla che l'utente esista
+	temp_user, err := rt.db.CheckUser(user.toDataBase())
+	if err != nil && err != sql.ErrNoRows {
+		ctx.Logger.WithError(err).Error("session: Error in CheckUser")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if temp_user.User_id != 0 { // ? Ho trovato l'user quindi assegno i valori
+		user.User_id = temp_user.User_id
+		user.Nickname = temp_user.Nickname
+
+		w.WriteHeader(http.StatusOK)
+		err = json.NewEncoder(w).Encode(user)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			ctx.Logger.WithError(err).Error("session: can't create response json")
+			return
+		}
 		return
 	}
 

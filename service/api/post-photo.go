@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"image/jpeg"
 	"io"
@@ -61,8 +62,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Mi serve un ID UNIVOCO per la foto
-	currentTime := time.Now()
-	datetime := currentTime.Format("2006-01-02 15:04:05")
+	datetime := time.Now()
 	id_user, _ := strconv.Atoi(ps.ByName("id"))
 
 	PhotoId, err := rt.db.CreatePhoto(id_user, datetime) //Prendo l'id della Photo
@@ -91,9 +91,18 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		ctx.Logger.WithError(err).Error("photo-upload: error copying body content into file photo")
 		return
 	}
-
 	outputFile.Close()
+
+	photo, err := rt.db.FindPhoto(PhotoId)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("post-photo: error executing FindPhoto")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	photo.Comments = nil
+	photo.Likes = nil
 	w.WriteHeader(http.StatusCreated)
+	_ = json.NewEncoder(w).Encode(photo)
 
 }
 

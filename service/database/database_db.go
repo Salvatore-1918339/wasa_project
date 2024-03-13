@@ -34,12 +34,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 )
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	CreateUser(User) error
-	CreatePhoto(int, string) (int, error)
+	CreatePhoto(int, time.Time) (int, error)
 	CreateComment(User, Photo_id, string, string) (int, error)
 	ChangeNickname(User, string) error
 	BanUser(User, User) error
@@ -63,12 +64,18 @@ type AppDatabase interface {
 	Checkfollow(int, int) (bool, error)
 	Checklike(int, int) (bool, error)
 	CheckBan(User, User) (bool, error)
+	CheckPhoto(int, int) (bool, error)
 	FindCommentOwner(Comment_id) (int, error)
+	FindComment(int) (Comment, error)
 	GetFollowing(User) ([]int, error)
+	GetFollower(User) ([]int, error)
+	FindPhoto(int) (Complete_Photo, error)
 	FindPhotos(User) ([]Complete_Photo, error)
 	FindLikes(Photo_id) ([]User_id, error)
-	FindComment(Photo_id) ([]Comment, error)
+	FindComments(Photo_id) ([]Comment, error)
+	FIndUser(User) (string, error)
 	PutLike(Photo_id, User) error
+	CheckUser(User) (User, error)
 
 	// Ping check if the DB is available or not
 	Ping() error

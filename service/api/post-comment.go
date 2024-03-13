@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -25,6 +26,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	fmt.Print("USER of the photo", photoOwnerId)
 
 	// ! login
 	requestingUserId_str, err := extractBearerToken(r, w)
@@ -83,10 +85,17 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		ctx.Logger.WithError(err).Error("post-Comment: failed executing query CreateComment ")
 		return
 	}
+	// ! Trova il commento
+	complete_Comment, err := rt.db.FindComment(comment_id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		ctx.Logger.WithError(err).Error("post-Comment: failed executing query FindComment ")
+		return
+	}
 
 	w.WriteHeader(http.StatusCreated)
 	// ! RITORNO L'ID DELL'COMMENTO
-	err = json.NewEncoder(w).Encode(Comment_id{Comment_id: comment_id})
+	err = json.NewEncoder(w).Encode(complete_Comment)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		ctx.Logger.WithError(err).Error("post-comment/Encode: failed convert photo_id to int64")

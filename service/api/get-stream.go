@@ -40,6 +40,7 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 		ctx.Logger.WithError(err).Error("getMyStream: Error executing GetFollowing ")
 		return
 	}
+	users_following = append(users_following, profileOwnerId)
 
 	// ! Prendo tutte le photo degli utenti che seguo
 	var stream_photos []database.Complete_Photo
@@ -50,6 +51,7 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 			ctx.Logger.WithError(err).Error("getMyStream: Error in FindPhotos")
 			return
 		}
+
 		// Aggiungi gli elementi di photos a stream_photos
 		stream_photos = append(stream_photos, photos...)
 
@@ -58,7 +60,7 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 	// ! Ora raccolgo tutti i commenti di ogni singola photo
 
 	for i := 0; i < len(stream_photos); i++ {
-		comments, err := rt.db.FindComment(Photo_id{Photo_id: stream_photos[i].Photo_id}.toDataBase())
+		comments, err := rt.db.FindComments(Photo_id{Photo_id: stream_photos[i].Photo_id}.toDataBase())
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			ctx.Logger.WithError(err).Error("getMyStream: Error in FindComment")

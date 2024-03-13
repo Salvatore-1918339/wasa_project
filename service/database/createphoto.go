@@ -1,8 +1,10 @@
 package database
 
-func (db *appdbimpl) CreatePhoto(Owner int, Timestamp string) (int, error) {
+import "time"
+
+func (db *appdbimpl) CreatePhoto(Owner int, timestamp time.Time) (int, error) {
 	// Eseguo la query
-	result, err := db.c.Exec("INSERT INTO Photo(owner,timestamp) VALUES (?,?)", Owner, Timestamp)
+	result, err := db.c.Exec("INSERT INTO Photo(owner,timestamp) VALUES (?,?)", Owner, timestamp)
 	if err != nil {
 		return -1, err
 	}

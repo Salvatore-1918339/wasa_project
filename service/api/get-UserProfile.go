@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -21,10 +22,31 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	profile.User_id = user_id
 
 	// ! Login
-	_, err = extractBearerToken(r, w)
+	requestingUserId_str, err := extractBearerToken(r, w)
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		ctx.Logger.WithError(err).Error("get-UserProfile: Error during login")
+		return
+	}
+	requestingUserId, err := strconv.Atoi(requestingUserId_str)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("get-UserProfile: error converting requesingUserId")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// ! Controllo se bannato
+	banned, err := rt.db.CheckBan(
+		User{User_id: requestingUserId}.toDataBase(),
+		User{User_id: user_id}.toDataBase())
+	if err != nil {
+		ctx.Logger.WithError(err).Error("get-photo: Error")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if banned {
+		ctx.Logger.WithError(errors.New("l'utente è bloccato")).Error("get-profile: Impossibile eseguire l'operazione")
+		w.WriteHeader(http.StatusPartialContent)
 		return
 	}
 
@@ -37,14 +59,15 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 	profile.Nickname = nickname
 
-	// ! Followers number
-	num_follower, err := rt.db.GetNumberFollower(profile.User_id)
+	// ! Followers of the Users
+	follower, err := rt.db.GetFollower(User{User_id: user_id}.toDataBase())
 	if err != nil && err != sql.ErrNoRows {
-		ctx.Logger.WithError(err).Error("get-UserProfile : error executing the number follower Query")
+		ctx.Logger.WithError(err).Error("get-UserProfile : error executing the follower Query")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	profile.Follower = num_follower
+	profile.Followers = follower
+	profile.N_Follower = len(profile.Followers)
 
 	// ! Followed number
 	num_followed, err := rt.db.GetNumberFollowed(profile.User_id)

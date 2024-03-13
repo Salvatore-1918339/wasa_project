@@ -7,7 +7,7 @@ import (
 type Comment struct {
 	Comment_string     string    `json:"comment_string"`
 	Photo_id           int       `json:"photo_id"`
-	Owner              string    `json:"owner"`
+	Owner              User      `json:"owner"`
 	Timestamp          time.Time `json:"timestamp"`
 	Comment_identifier string    `json:"comment_identifier"`
 }
@@ -40,7 +40,7 @@ type Comment_id struct {
 //Struttura Photo
 type Complete_Photo struct {
 	Photo_id  int       `json:"photo_id"`
-	Owner     int       `json:"owner"`
+	Owner     User      `json:"owner"`
 	Timestamp time.Time `json:"timestamp"`
 	Comments  []Comment `json:"comments"`
 	Likes     []User_id `json:"likes"`

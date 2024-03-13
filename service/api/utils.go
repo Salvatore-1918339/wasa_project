@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -22,20 +23,15 @@ func extractBearerToken(req *http.Request, w http.ResponseWriter) (string, error
 
 	// Ottieni l'intestazione Authorization dalla richiesta
 	authHeader := req.Header.Get("Authorization")
-
+	fmt.Print(authHeader)
 	// Verifica se l'intestazione Authorization è vuota o mancante
 	if authHeader == "" {
 		w.WriteHeader(http.StatusForbidden)
 		return "", errors.New("intestazione Authorization mancante")
 	}
 
-	// Verifica se l'intestazione inizia con "Bearer "
-	if !strings.HasPrefix(authHeader, "Bearer ") {
-		return "", errors.New("formato di Authorization non valido. Deve iniziare con 'Bearer '")
-	}
-
-	// Estrai il token Bearer dalla stringa dell'intestazione
-	token := strings.TrimPrefix(authHeader, "Bearer ")
+	list := strings.Split(authHeader, " ")
+	token := list[len(list)-1]
 
 	return token, nil
 }
