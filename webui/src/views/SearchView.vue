@@ -46,12 +46,14 @@ passando l'ID del profilo come parametro.
 				return 
 			}
 			try {
+				console.log("Search Value: ",this.searchValue)
 				// Search user (PUT):  "/users"
-				let response = await this.$axios.get("/users",{
+				let response = await this.$axios.get("/Users",{
 						params: {
-						id: this.searchValue,
+							user_query_id: this.searchValue,
 					},
 				});
+				console.log(response.data)
 				this.users = response.data
 
 			} catch (e) {
@@ -87,9 +89,9 @@ L'evento "clickedUser" viene gestito per visualizzare il profilo dell'utente sel
 -->
 
 <template>
-	<div class="container-fluid h-100 ">
-		<UserMiniCard v-for="(user,index) in users" 
-		:key="index"
+	<div class="container-fluid h-100 " style="padding-top: 100px;" >
+		<UserMiniCard v-for="(user) in users" 
+		:key="user.user_id"
 		:identifier="user.user_id" 
 		:nickname="user.nickname" 
 		@clickedUser="goToProfile"/>

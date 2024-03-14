@@ -32,10 +32,10 @@ Questi stili includono la larghezza, il colore del testo, il bordo, e l'effetto 
 <template>
     
     <div class="row mb-2 mt-2">
-        <div class="col d-flex justify-content-center">
-            <div class="user-mini-card card bg-transparent border-start">
-                <div class="card-body">
-                    <h5 @click="clickedUser" class="user-mini-card-title d-flex justify-content-center ">{{nickname }} @{{identifier }}</h5>
+        <div class="col d-flex justify-content-center" style="margin-top: 5px; margin-bottom: 5px;">
+            <div class="user-mini-card card border-start" style="filter: drop-shadow(5px 5px 6px black);">
+                <div>
+                    <h5 @click="clickedUser" class="user-mini-card-title d-flex justify-content-center ">@{{nickname}}</h5>
                 </div>
             </div>
         </div>
@@ -52,12 +52,12 @@ Questi stili includono la larghezza, il colore del testo, il bordo, e l'effetto 
 .user-mini-card{
     color: black;
     width: 25%;
-    border: none;
-    border-color: black;
+    transition: all 400ms ease-in-out;
 }
 
-.user-mini-card-title:hover{
+.user-mini-card:hover{
     cursor: pointer;
-    font-weight: bold;
+    transition: 0.3s ease;
+    transform: translateY(-5px);
 }
 </style>
