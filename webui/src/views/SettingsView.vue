@@ -11,23 +11,47 @@
 	data: function () {
 		return {
 			errormsg: null,
+			old_nickname: "",
+			temp_nickname:"",
 			nickname: "",
+			changed: false,
 		}
 	},
 
 	methods:{
+
+		async loadNickname(){
+			if (this.$route.params.id === undefined){
+				return
+			}
+			try{
+				// Get user profile info: /Users/:id
+				let response = await this.$axios.get("/Users/"+this.$route.params.id);
+				this.old_nickname = response.data.nickname
+
+			}catch(e){
+				this.currentIsBanned = true
+			}
+		},
+
 		async modifyNickname(){
 			try{
-				// Nickname put: /users/:id
-				let resp = await this.$axios.put("/users/"+this.$route.params.id,{
+				// Nickname put: /Users/:id
+				let resp = await this.$axios.put("/Users/"+this.$route.params.id,{
 					nickname: this.nickname,
 				})
-
+				this.changed=true
+				this.temp_nickname = this.nickname
 				this.nickname=""
 			}catch (e){
 				this.errormsg = e.toString();
 			}
 		},
+	},
+
+	async mounted(){
+    	this.$axios.defaults.headers.common['Authorization']= 'Bearer ' + localStorage.getItem('token')
+		await this.loadNickname()
 	},
 
 }
@@ -48,71 +72,56 @@ Infine, il codice utilizza stili CSS per formattare la pagina e rendere il testo
 -->
 
 <template>
-	<div class="container-fluid p-5">
+	<div class="container-fluid p-5" style="padding-top: 150px;">
 	  <div class="row">
-		<div class="col d-flex justify-content-center mb-4">
-		  <h1 class="text-primary">{{ this.$route.params.id }}&nbspImpostazioni</h1>
+		<div class="col d-flex justify-content-center mb-4" style="padding-top: 100px;">
+		  <h1 class="text-primary">Impostazioni</h1>
 		</div>
 	  </div>
   
-	  <div class="row">
-		<div class="col-12 d-flex justify-content-center mb-3">
-			<div class="font-large">
-		  <p class="ml-2">Un utente ha questa struttura: </p>
-		  </div>
-		  <div class="font-large">
-		  <p class="ml-2 text-success">&nbspusername</p>
-		  </div>
-		  
-		  <div class="font-large">
-		  <p class="ml-2">@id.</p>
-		</div>
-		</div>
-		<div class="col-12 d-flex justify-content-center mb-3">
-			<div class="font-large">
-		  <p>È possibile modificare solo la parte prima della @</p>
-		  </div>
-		  <div class="font-large">
-		  <p class="text-success">&nbsp(username)&nbsp</p>
-		  </div>
-		  <div class="font-large">
-		  <p>e non quella dopo (l'id).</p>
-		  </div>
-		</div>
-		<div class="col-12 d-flex justify-content-center mb-3">
-		</div>
-	  </div>
-  
-	  <div class="row">
-		<div class="col d-flex justify-content-center">
-		  <div class="input-group mb-3 w-25">
-			<input
-			  type="text"
-			  class="form-control w-25"
-			  placeholder="Inserisci il tuo nuovo username"
-			  maxlength="16"
-			  minlength="3"
-			  v-model="nickname"
-			/>
-			<div class="input-group-append">
-			  <button
-				class="btn btn-primary"
-				@click="modifyNickname"
-				:disabled="nickname === null || nickname.length > 16 || nickname.length < 3 || nickname.trim().length === 0"
-			  >
-				Modifica
-			  </button>
+	  <div class="row justify-content-center">
+			<div v-if="!changed" class="col-12 d-flex justify-content-center mb-3" >
+				<div class="font-large">
+					<p class="ml-2">Il tuo nickname è: </p>
+				</div>
+				<div class="font-large">
+					<p class="ml-2 text-success">&nbsp{{old_nickname}}</p>
+				</div>
 			</div>
-		  </div>
+			<div v-else class="col-12 d-flex justify-content-center mb-3"  style="background-color: #2b961f; border-radius: 8px; width: auto;">
+				<div class="font-large">
+					<p class="ml-2" style="margin-left: 5px; color: white;">Hai cambiato correttamente il tuo Nickname: </p>
+				</div>
+				<div class="font-large">
+					<p style="font-weight: bolder; color: white;">&nbsp{{temp_nickname}}</p>
+				</div>
+			</div>
 		</div>
-	  </div>
   
-	  <div class="row" v-if="nickname.trim().length > 0">
-		<div class="col d-flex justify-content-center mb-3">
-		  <p>Preview: {{ nickname }} @{{ this.$route.params.id }}</p>
-		</div>
+		<div class="row">
+			<div class="col d-flex justify-content-center">
+
+				<div class="input-group mb-3 w-70" style="border: 1px solid red;">
+					<input
+					type="text"
+					class="form-control w-25"
+					placeholder="Inserisci il tuo nuovo Nickname"
+					maxlength="25"
+					minlength="5"
+					v-model="nickname"
+					/>
+					<div class="input-group-append">
+					<button
+						class="btn btn-primary"
+						@click="modifyNickname"
+						:disabled="nickname === null || nickname.length > 25 || nickname.length < 5 || nickname.trim().length === 0">
+						Modifica
+					</button>
+					</div>
+				</div>
+			</div>
 	  </div>
-  
+    
 	  <div class="row">
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 	  </div>

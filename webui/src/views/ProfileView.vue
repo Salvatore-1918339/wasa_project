@@ -122,7 +122,7 @@ export default {
         return
       }
 			try{
-        // Get user profile: /users/:id
+        // Get user profile: /Users/:id
 				let response = await this.$axios.get("/Users/"+this.$route.params.id);
         this.banStatus = false
         this.userExists = true
@@ -134,8 +134,6 @@ export default {
 				if (response.status === 204){
 					this.userExists = false
 				}
-				console.log(response.data)
-
         this.nickname = response.data.nickname
         this.user_id = response.data.user_id
 				this.followerCnt = response.data.n_follower
@@ -248,8 +246,8 @@ Ogni componente <Foto> visualizza una singola foto e le relative informazioni, c
       </div>
     </div>
 
-    <div v-else class="mt-5 text-center">
-      <h2 class="no-posts-text">Non c'è ancora alcun post</h2>
+    <div v-else class="mt-5" style="" >
+      <h2 class="no-posts-text" >Non c'è ancora alcun post</h2>
     </div>
 
     <error-msg v-if="errormsg" :msg="errormsg"></error-msg>

@@ -32,7 +32,6 @@ export default {
 			this.date = new Date(this.upload_date);
             var giorno = this.date.getDate();
             var diff = new Date() - this.date;
-			console.log("uploadDATE ",this.upload_date,"               ",new Date(this.upload_date))
             if (giorno !=  new Date().getDate()) {
                 var giorniPassati = Math.floor(diff/(1000*60*60*24)) 
                 this.date = giorniPassati + " giorni fa";

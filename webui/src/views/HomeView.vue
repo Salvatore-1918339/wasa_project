@@ -23,7 +23,6 @@ export default {
 				this.errormsg = null
 				// Home get: "/Users/:id/home"
 				let response = await this.$axios.get("/Users/" + localStorage.getItem('token') + "/home")
-				console.log("GET della Home: ",response.data)
 				if (response.data != null){
 					this.photos = response.data
 				}
