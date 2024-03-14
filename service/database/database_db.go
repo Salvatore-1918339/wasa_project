@@ -76,6 +76,7 @@ type AppDatabase interface {
 	FIndUser(User) (string, error)
 	PutLike(Photo_id, User) error
 	CheckUser(User) (User, error)
+	SearchNickname(string) (bool, error)
 
 	// Ping check if the DB is available or not
 	Ping() error

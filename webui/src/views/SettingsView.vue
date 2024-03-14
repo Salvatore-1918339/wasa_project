@@ -11,6 +11,7 @@
 	data: function () {
 		return {
 			errormsg: null,
+			err_nickname_exist:false,
 			old_nickname: "",
 			temp_nickname:"",
 			nickname: "",
@@ -36,15 +37,24 @@
 
 		async modifyNickname(){
 			try{
+				this.temp_nickname = this.nickname
 				// Nickname put: /Users/:id
 				let resp = await this.$axios.put("/Users/"+this.$route.params.id,{
 					nickname: this.nickname,
 				})
+				this.err_nickname_exist = false
+				console.log("Status request nickname ",resp.status)
 				this.changed=true
-				this.temp_nickname = this.nickname
 				this.nickname=""
 			}catch (e){
-				this.errormsg = e.toString();
+				switch(e.response.status){
+					case 400: 
+						this.err_nickname_exist = true;
+						break;
+					default: 
+						this.errormsg = e.toString();
+						break;
+				}
 			}
 		},
 	},
@@ -80,20 +90,32 @@ Infine, il codice utilizza stili CSS per formattare la pagina e rendere il testo
 	  </div>
   
 	  <div class="row justify-content-center">
-			<div v-if="!changed" class="col-12 d-flex justify-content-center mb-3" >
-				<div class="font-large">
-					<p class="ml-2">Il tuo nickname è: </p>
+			<div v-if="!err_nickname_exist">
+				<div v-if="!changed" class="col-12 d-flex justify-content-center mb-3" >
+					<div class="font-large">
+						<p class="ml-2">Il tuo nickname è: </p>
+					</div>
+					<div class="font-large">
+						<p class="ml-2 text-success">&nbsp{{old_nickname}}</p>
+					</div>
 				</div>
-				<div class="font-large">
-					<p class="ml-2 text-success">&nbsp{{old_nickname}}</p>
+				<div v-else class="col-12 d-flex justify-content-center mb-3"  style="background-color: #2b961f; border-radius: 8px; width: auto;">
+					<div class="font-large">
+						<p class="ml-2" style="margin-left: 5px; color: white;">Hai cambiato correttamente il tuo Nickname: </p>
+					</div>
+					<div class="font-large">
+						<p style="font-weight: bolder; color: white;">&nbsp{{temp_nickname}}</p>
+					</div>
 				</div>
 			</div>
-			<div v-else class="col-12 d-flex justify-content-center mb-3"  style="background-color: #2b961f; border-radius: 8px; width: auto;">
-				<div class="font-large">
-					<p class="ml-2" style="margin-left: 5px; color: white;">Hai cambiato correttamente il tuo Nickname: </p>
-				</div>
-				<div class="font-large">
-					<p style="font-weight: bolder; color: white;">&nbsp{{temp_nickname}}</p>
+			<div v-else>
+				<div class="col-12 d-flex justify-content-center mb-3"  style="background-color: red; border-radius: 8px; width: auto;">
+					<div class="font-large">
+						<p class="ml-2" style="margin-left: 5px; color: white;">Il Nickname scelto esiste già : </p>
+					</div>
+					<div class="font-large">
+						<p style="font-weight: bolder; color: white;">&nbsp{{temp_nickname}}</p>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -101,7 +123,7 @@ Infine, il codice utilizza stili CSS per formattare la pagina e rendere il testo
 		<div class="row">
 			<div class="col d-flex justify-content-center">
 
-				<div class="input-group mb-3 w-70" style="border: 1px solid red;">
+				<div class="input-group mb-3 w-70">
 					<input
 					type="text"
 					class="form-control w-25"

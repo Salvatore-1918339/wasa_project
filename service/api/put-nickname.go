@@ -51,6 +51,18 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	// ! Controllo che il nickname sia libero
+	exist, err := rt.db.SearchNickname(newNickname.Nickname)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("put-nickname: Error executing query")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if exist {
+		// ? L'utente esiste già
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	// ! richiamo changeNickname del DB
 	err = rt.db.ChangeNickname(User{User_id: user_id}.toDataBase(), newNickname.Nickname)
