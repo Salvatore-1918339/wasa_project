@@ -153,8 +153,8 @@ export default {
         },
 
         removePhotoFromList(photo_id){
-			this.photos = this.photos.filter(item => item.photo_id !== photo_id)
-      this.postCnt -= 1
+          this.photos = this.photos.filter(item => item.photo_id !== photo_id)
+          this.postCnt -= 1
 		},
 	},
 

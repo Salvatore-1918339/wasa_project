@@ -51,7 +51,7 @@ export default {
 		async deletePhoto(){
 			try{
 				// Delete photo: /users/:id/photos/:photo_id
-				await this.$axios.delete("/users/"+this.owner+"/photos/"+this.photo_id)
+				await this.$axios.delete("/Users/"+this.owner+"/Photos/"+this.photo_id)
 				// location.reload()
 				this.$emit("removePhoto",this.photo_id)
 			}catch(e){
