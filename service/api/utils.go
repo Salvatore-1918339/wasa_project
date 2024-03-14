@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -23,7 +22,6 @@ func extractBearerToken(req *http.Request, w http.ResponseWriter) (string, error
 
 	// Ottieni l'intestazione Authorization dalla richiesta
 	authHeader := req.Header.Get("Authorization")
-	fmt.Print(authHeader)
 	// Verifica se l'intestazione Authorization è vuota o mancante
 	if authHeader == "" {
 		w.WriteHeader(http.StatusForbidden)

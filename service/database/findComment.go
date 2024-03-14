@@ -1,7 +1,5 @@
 package database
 
-import "fmt"
-
 func (db *appdbimpl) FindComment(Comment_id int) (Comment, error) {
 	queryRes, err := db.c.Query("SELECT Comment.comment_id, Comment.photo_id, Comment.txt, Users.user_id, Users.nickname, Comment.timestamp	FROM Comment INNER JOIN Users ON Comment.owner = Users.user_id WHERE Comment.comment_id = ?;", Comment_id)
 	var comment Comment
@@ -15,7 +13,6 @@ func (db *appdbimpl) FindComment(Comment_id int) (Comment, error) {
 			return comment, err
 		}
 	}
-	fmt.Print("COMMENTO", comment)
 	return comment, nil
 
 }

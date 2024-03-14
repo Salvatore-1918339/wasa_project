@@ -24,7 +24,7 @@ type User_id struct {
 	User_id int `json:"user_id"`
 }
 
-//Struttura User
+// Struttura User
 type User struct {
 	User_id  int    `json:"user_id"`
 	Nickname string `json:"nickname"`
@@ -37,7 +37,7 @@ type Comment_id struct {
 	Comment_id int `json:"comment_identifier"`
 }
 
-//Struttura Photo
+// Struttura Photo
 type Complete_Photo struct {
 	Photo_id  int       `json:"photo_id"`
 	Owner     User      `json:"owner"`

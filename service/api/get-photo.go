@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -14,7 +13,6 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 
 	user_id, err := strconv.Atoi(ps.ByName("id"))
 	if err != nil {
-		fmt.Print("AOOOOOO:", ps.ByName("id"))
 		ctx.Logger.WithError(err).Error("get-photo: error converting id")
 		w.WriteHeader(http.StatusBadRequest)
 		return
