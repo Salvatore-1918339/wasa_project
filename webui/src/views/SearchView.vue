@@ -62,7 +62,7 @@ passando l'ID del profilo come parametro.
 		},
 
 		goToProfile(profileId){
-			this.$router.replace("/users/"+profileId)
+			this.$router.replace("/Users/"+profileId)
 		}
 	},
 

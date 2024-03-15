@@ -30,12 +30,15 @@ Questi stili includono la larghezza, il colore del testo, il bordo, e l'effetto 
 -->
 
 <template>
-    
-    <div class="row mb-2 mt-2">
-        <div class="col d-flex justify-content-center" style="margin-top: 5px; margin-bottom: 5px;">
-            <div class="user-mini-card card border-start" style="filter: drop-shadow(5px 5px 6px black);">
-                <div>
-                    <h5 @click="clickedUser" class="user-mini-card-title d-flex justify-content-center ">@{{nickname}}</h5>
+
+    <div class="row mb-2 mt-2" >
+        <div class="col d-flex justify-content-center" style="margin-top: 5px; margin-bottom: 5px; height: 50px;border: 1px;">
+            <div class="user-mini-card card" style="display: flex; align-items: center; ">
+                <div class="left-banner">
+                    <img src="../assets/images/user.png" alt="User" height="50"  style="position:absolute;right:-23px; padding-bottom: 4px;">
+                </div>
+                <div style="position: relative;">
+                    <h5 @click="clickedUser" class="" style="padding-top: 6px; font-weight: bold;font-size: 1.8em; position: absolute; left: -60px;">{{nickname}}</h5>
                 </div>
             </div>
         </div>
@@ -45,11 +48,23 @@ Questi stili includono la larghezza, il colore del testo, il bordo, e l'effetto 
 
 <style>
 
+
 .user{
     color: var(--color-text);
 }
 
+.left-banner {
+    position: absolute;
+    padding-bottom: 4px;
+    left: 0;
+    width: 65px;
+    height: 100%;
+    background-color: #ffcc00;
+    border-right: 2px solid black;
+}
+
 .user-mini-card{
+    border: 2px solid black;
     color: black;
     width: 25%;
     transition: all 400ms ease-in-out;
@@ -59,5 +74,6 @@ Questi stili includono la larghezza, il colore del testo, il bordo, e l'effetto 
     cursor: pointer;
     transition: 0.3s ease;
     transform: translateY(-5px);
+    filter: drop-shadow(5px 5px 0px black);
 }
 </style>
