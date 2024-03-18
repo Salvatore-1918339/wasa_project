@@ -35,12 +35,12 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		return
 	}
 
-	// ! Controllo se bannato
+	// ! Controllo se mi ha bannato
 	banned, err := rt.db.CheckBan(
-		User{User_id: requestingUserId}.toDataBase(),
-		User{User_id: user_id}.toDataBase())
+		User{User_id: user_id}.toDataBase(),
+		User{User_id: requestingUserId}.toDataBase())
 	if err != nil {
-		ctx.Logger.WithError(err).Error("get-photo: Error")
+		ctx.Logger.WithError(err).Error("get-UserProfile: Error")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

@@ -5,9 +5,9 @@ import (
 	"errors"
 )
 
-func (db *appdbimpl) CheckBan(banned User, photo_owner User) (bool, error) {
+func (db *appdbimpl) CheckBan(banned User, user User) (bool, error) {
 	var counter int
-	err := db.c.QueryRow("SELECT 1 FROM Banned WHERE banner=? AND user_id=?", photo_owner.User_id, banned.User_id).Scan(&counter)
+	err := db.c.QueryRow("SELECT 1 FROM Banned WHERE banner=? AND user_id=?", user.User_id, banned.User_id).Scan(&counter)
 
 	// ! ERRORE NON TROVA riga CHECK
 	if errors.Is(err, sql.ErrNoRows) {

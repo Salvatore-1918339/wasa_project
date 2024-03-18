@@ -37,7 +37,6 @@ export default {
 
 			photos: [],
       following: [],
-      followers: [],
 		}
 	},
 
@@ -85,12 +84,12 @@ export default {
 		async followClick(){
             try{
                 if (this.followStatus){ 
-                    // Delete like: /users/:id/followers/:follower_id
-                    await this.$axios.delete("/users/"+this.$route.params.id+"/followers/"+ localStorage.getItem('token'));
+                    // Delete follow: /users/:id/followers/:follower_id
+                    await this.$axios.delete("/Users/"+localStorage.getItem('token')+"/followers/"+ this.$route.params.id);
                     this.followerCnt -=1
                 }else{
-                    // Put like: /users/:id/followers/:follower_id
-                    await this.$axios.put("/users/"+this.$route.params.id+"/followers/"+ localStorage.getItem('token'));
+                    // Put follow: /users/:id/followers/:follower_id
+                    await this.$axios.put("/Users/"+localStorage.getItem('token')+"/followers/"+ this.$route.params.id);
                     this.followerCnt +=1
                 }
                 this.followStatus = !this.followStatus
@@ -104,11 +103,11 @@ export default {
             try{
                 if (this.banStatus){
                     // Delete ban: /users/:id/banned_users/:banned_id
-                    await this.$axios.delete("/users/"+localStorage.getItem('token')+"/banned_users/"+ this.$route.params.id);
+                    await this.$axios.delete("/Users/"+localStorage.getItem('token')+"/banned_users/"+ this.$route.params.id);
                     this.loadInfo()
                 }else{
                     // Put ban: /users/:id/banned_users/:banned_id
-                    await this.$axios.put("/users/"+localStorage.getItem('token')+"/banned_users/"+ this.$route.params.id);
+                    await this.$axios.put("/Users/"+localStorage.getItem('token')+"/banned_users/"+ this.$route.params.id);
                     this.followStatus = false
                 }
                 this.banStatus = !this.banStatus
@@ -125,8 +124,10 @@ export default {
         // Get user profile: /Users/:id
 				let response = await this.$axios.get("/Users/"+this.$route.params.id);
         this.banStatus = false
+        
         this.userExists = true
         this.currentIsBanned = false
+        console.log(response)
         if (response.status === 206){
           this.banStatus = true
           return
@@ -142,6 +143,7 @@ export default {
 				this.followStatus = response.data.followers != null ? response.data.followers.find(obj => obj.user_id === localStorage.getItem('token')) : false
         this.photos = response.data.posts != null ? response.data.posts : []
         this.followers = response.data.followers != null ? response.data.followers : []
+        
 
 			}catch(e){
 				this.currentIsBanned = true
@@ -192,7 +194,7 @@ Ogni componente <Foto> visualizza una singola foto e le relative informazioni, c
         <h5 class="username">@{{nickname}} </h5>
         <div class="actions">
           <template v-if="!sameUser">
-            <button @click="followClick" class="btn btn-success">
+            <button v-if="!banStatus" @click="followClick" class="btn btn-success">
               {{followStatus ? "Non seguire più" : "Segui"}}
             </button>
             <button @click="banClick" class="btn btn-danger">
