@@ -49,11 +49,9 @@ export default {
     },
 
 	computed:{
-
-        currentPath(){
-            return this.$route.params.id
-        },
-        
+    currentPath(){
+      return this.$route.params.id
+    },    
 
 		sameUser(){
 			return this.$route.params.id === localStorage.getItem('token')

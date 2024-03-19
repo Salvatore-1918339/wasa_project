@@ -14,6 +14,7 @@ import PageNotFound from './components/PageNotFound.vue'
 import LikeModal from './components/LikeModal.vue'
 import CommentModal from './components/CommentModal.vue'
 import PhotoComment from './components/PhotoComment.vue'
+import LikeComponent from './components/LikeComponent.vue'
 
 import './assets/dashboard.css'
 import './assets/main.css'
@@ -30,5 +31,6 @@ app.component("PageNotFound", PageNotFound);
 app.component("LikeModal", LikeModal);
 app.component("CommentModal", CommentModal);
 app.component("PhotoComment", PhotoComment);
+app.component("LikeComponent",LikeComponent)
 app.use(router)
 app.mount('#app')

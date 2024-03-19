@@ -24,7 +24,16 @@ Il contenuto del modello consiste in un'intestazione con un titolo "Mi piace" e 
 e un corpo che contiene un elenco di elementi "UserMiniCard", che mostrano informazioni sugli utenti che hanno espresso un "Mi piace" 
 per il contenuto. 
 
-Il codice CSS associato al modello include la classe "my-modal-disp-none" per nascondere il modello quando non è in uso.-->
+Il codice CSS associato al modello include la classe "my-modal-disp-none" per nascondere il modello quando non è in uso.
+
+
+<UserMiniCard v-for="(user) in likes" 
+						:key="user.user_id"
+						:identifier="user.user_id" 
+						:nickname="user.nickname"
+						@clickedUser="goToProfile"/>
+-->
+
 
 <template>
 	<div class="modal fade my-modal-disp-none" :id="modal_id" tabindex="-1" aria-hidden="true">
@@ -34,13 +43,14 @@ Il codice CSS associato al modello include la classe "my-modal-disp-none" per na
 					<h1 class="modal-title fs-5 mb-0" :id="modal_id">Mi piace</h1>
 					<button type="button" class="btn-close ml-auto" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body p-4 ">
+				<div class="modal-body p-4 " >
 					<div class="d-flex flex-wrap justify-content-center">
-						<UserMiniCard v-for="(user) in likes" 
-						:key="user.user_id"
-						:identifier="user.user_id" 
-						:nickname="user.nickname"
-						@clickedUser="goToProfile"/>
+						<LikeComponent v-for="(user) in likes"
+							:key="user.user_id"
+							:identifier="user.user_id" 
+							:nickname="user.nickname"
+							@clickedUser="goToProfile"
+							style="height:40px;"/>
 					</div>
 				</div>
 			</div>

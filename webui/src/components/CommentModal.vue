@@ -37,9 +37,8 @@ export default {
 		async addComment(){
 			try{
 				// Comment post: /users/:id/photos/:photo_id/comments
-				let response = await this.$axios.post("/users/"+ this.photo_owner +"/photos/"+this.photo_id+"/comments",{
-					user_id: localStorage.getItem('token'),
-					comment: this.commentValue
+				let response = await this.$axios.post("/Users/"+ this.photo_owner +"/Photos/"+this.photo_id+"/comments",{
+					comment_string: this.commentValue
 				},{
 					headers:{
 						'Content-Type': 'application/json'
@@ -49,8 +48,10 @@ export default {
 				this.$emit('addComment',{
 					comment_id: response.data.comment_id, 
 					photo_id: this.photo_id, 
-					user_id: localStorage.getItem('token'), 
-					comment: this.commentValue}
+					owner: response.data.owner,
+					comment_string: this.commentValue,
+					timestamp: response.data.timestamp,
+					},	
 				)
 				this.commentValue = ""
 				
@@ -90,12 +91,12 @@ gestire l'aggiunta di nuovi commenti e eliminare i commenti esistenti.
 			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		  </div>
   
-		  <div class="modal-body">
-			<PhotoComment v-for="(comm,index) in comments_list" 
-						  :key="index" 
-						  :author="comm.user_id" 
-						  :username="comm.username"
-						  :comment_id="comm.comment_id"
+		  <div class="modal-body" >
+			<PhotoComment v-for="(comm) in comments_list" 
+						  :key="comm.comment_identifier" 
+						  :author="comm.owner.user_id" 
+						  :username="comm.owner.nickname"
+						  :comment_id="comm.comment_identifier"
 						  :photo_id="comm.photo_id"
 						  :content="comm.comment_string"
 						  :photo_owner="photo_owner"
@@ -104,10 +105,10 @@ gestire l'aggiunta di nuovi commenti e eliminare i commenti esistenti.
 		  </div>
 		  <div class="modal-footer">
     <textarea class="form-control" id="exampleFormControlTextarea1" 
-     placeholder="Scrivi un commento" rows="1" maxLength="30" v-model="commentValue"></textarea>
+     placeholder="Scrivi un commento" rows="1" maxLength="300" v-model="commentValue"></textarea>
     <button type="button" class="btn btn-primary" 
      @click.prevent="addComment" 
-     :disabled="commentValue.length < 1 || commentValue.length > 30">
+     :disabled="commentValue.length < 1 || commentValue.length > 300">
      Invia
     </button>
 </div>
