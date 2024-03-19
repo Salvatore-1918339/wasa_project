@@ -32,6 +32,7 @@ export default {
                 });
 
 				localStorage.setItem('token',response.data.user_id);
+				localStorage.setItem('nickname', this.nickname)
 				this.$axios.defaults.headers.common['Authorization']= 'Bearer ' + response.data.user_id
 				this.$router.replace("/home")
 				this.$emit('updatedLoggedChild',true)

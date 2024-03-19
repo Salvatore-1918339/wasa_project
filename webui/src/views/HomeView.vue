@@ -26,8 +26,8 @@ export default {
 				if (response.data != null){
 					this.photos = response.data
 				}
-				
 			} catch (e) {
+				console.log(e.toString())
 				this.errormsg = e.toString()
 			}
 		}

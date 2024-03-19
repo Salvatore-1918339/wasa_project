@@ -71,14 +71,15 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// ! Ora raccolgo i Like delle singole Photo
 	for i := 0; i < len(stream_photos); i++ {
-		likes, err := rt.db.FindLikes(Photo_id{Photo_id: stream_photos[i].Photo_id}.toDataBase())
+		var users []database.User
+		users, err := rt.db.FindLikes(Photo_id{Photo_id: stream_photos[i].Photo_id}.toDataBase())
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			ctx.Logger.WithError(err).Error("getMyStream: Error in FindLikes")
 			return
 		}
-		stream_photos[i].Likes = likes
+		stream_photos[i].Likes = users
 	}
 
 	// ! Ordinamento per data

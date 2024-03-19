@@ -46,14 +46,12 @@ passando l'ID del profilo come parametro.
 				return 
 			}
 			try {
-				console.log("Search Value: ",this.searchValue)
-				// Search user (PUT):  "/users"
+				// Search user (PUT):  "/Users"
 				let response = await this.$axios.get("/Users",{
 						params: {
 							user_query_id: this.searchValue,
 					},
 				});
-				console.log(response.data)
 				this.users = response.data
 
 			} catch (e) {

@@ -25,6 +25,7 @@ export default {
   methods:{
     logout(){
       localStorage.removeItem('token')
+      localStorage.removeItem('nickname')
       this.$emit('logoutNavbar',false)
     },
     goBackHome(){

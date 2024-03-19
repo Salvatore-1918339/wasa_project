@@ -64,26 +64,22 @@ export default {
 		},
 
 		async toggleLike() {
-
 			if(this.isOwner){ 
 				return
 			}
-
-			const bearer = localStorage.getItem('token')
-
+			const token = localStorage.getItem('token')
 			try{
 				if (!this.liked){
 
-					// Put like: /users/:id/photos/:photo_id/likes/:like_id"
-					await this.$axios.put("/users/"+ this.owner +"/photos/"+this.photo_id+"/likes/"+ bearer)
+					// Put like: /Users/:id/Photos/:photo_id/Likes"
+					await this.$axios.put("/Users/"+ this.owner +"/Photos/"+this.photo_id+"/Likes")
 					this.allLikes.push({
-						user_id: bearer,
-						username: bearer
+						user_id: token,
+						nickname: localStorage.getItem('nickname')
 					})
-
 				}else{
-					// Delete like: /users/:id/photos/:photo_id/likes/:like_id"
-					await this.$axios.delete("/users/"+ this.owner  +"/photos/"+this.photo_id+"/likes/"+ bearer)
+					// Delete like: /Users/:id/Photos/:photo_id/Likes/:like_id"
+					await this.$axios.delete("/Users/"+ this.owner  +"/Photos/"+this.photo_id+"/Likes/"+ token)
 					this.allLikes.pop()
 				}
 
@@ -108,12 +104,14 @@ export default {
 	async mounted(){
 		await this.loadPhoto()
 
+		// Se nel likes passato dal padre c'è qualcosa allora copio i suoi mi piace
 		if (this.likes != null){
 			this.allLikes = this.likes
 		}
 
+		// Funzione che non funziona. Controlla se sono io ad aver messo il mi piace. e setta il bool liked 
 		if (this.likes != null){
-			this.liked = this.allLikes.some(obj => obj.user_id === localStorage.getItem('token'))
+			this.liked = this.allLikes.some(obj => obj.user_id === +localStorage.getItem('token')) // + serve a convertire il valore in int
 		}
 		if (this.comments != null){
 			this.allComments = this.comments
@@ -173,13 +171,13 @@ Il codice utilizza anche Bootstrap, un framework di design per lo sviluppo di si
                                 </i>
                         </button>
 
-                            <button class="btn btn-primary mr-3 button-commento d-flex align-items-center" 
-							data-bs-toggle="modal" :data-bs-target="'#comment_modal'+photo_id">
+                        <button class="btn btn-primary mr-3 button-commento d-flex align-items-center" 
+						data-bs-toggle="modal" :data-bs-target="'#comment_modal'+photo_id">
 
-                                <i class="my-comment-color fa-regular fa-comment me-1" @click="commentClick"></i>
-                                <i class="my-comment-color-2"> {{allComments != null ? allComments.length : 0}}</i>
+            	            <i class="my-comment-color fa-regular fa-comment me-1" @click="commentClick"></i>
+                            <i class="my-comment-color-2"> {{allComments != null ? allComments.length : 0}}</i>
 
-                            </button>
+                        </button>
 					</div>
 				
 			  </div>

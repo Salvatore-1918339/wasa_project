@@ -43,7 +43,6 @@
 					nickname: this.nickname,
 				})
 				this.err_nickname_exist = false
-				console.log("Status request nickname ",resp.status)
 				this.changed=true
 				this.nickname=""
 			}catch (e){

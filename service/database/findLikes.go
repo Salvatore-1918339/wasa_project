@@ -1,7 +1,7 @@
 package database
 
-func (db *appdbimpl) FindLikes(photo Photo_id) ([]User_id, error) {
-	queryRes, err := db.c.Query("SELECT * FROM Likes WHERE photo_id=?", photo.Photo_id)
+func (db *appdbimpl) FindLikes(photo Photo_id) ([]User, error) {
+	queryRes, err := db.c.Query("SELECT Users.user_id, Users.nickname FROM Users INNER JOIN Likes ON Users.user_id = Likes.user_id WHERE Likes.photo_id =?", photo.Photo_id)
 	// ! Controllo degli errori
 	if err != nil {
 		queryRes.Close()
@@ -11,15 +11,14 @@ func (db *appdbimpl) FindLikes(photo Photo_id) ([]User_id, error) {
 		return nil, queryRes.Err()
 	}
 
-	var users_id []User_id
+	var users []User
 	for queryRes.Next() {
-		var photo Complete_Photo
-		var temp_user int
-		err = queryRes.Scan(&photo.Photo_id, &temp_user)
+		var user User
+		err = queryRes.Scan(&user.User_id, &user.Nickname)
 		if err != nil {
 			return nil, err
 		}
-		users_id = append(users_id, User_id{User_id: temp_user})
+		users = append(users, User{User_id: user.User_id, Nickname: user.Nickname})
 	}
-	return users_id, nil
+	return users, nil
 }

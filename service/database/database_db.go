@@ -71,7 +71,7 @@ type AppDatabase interface {
 	GetFollower(User) ([]int, error)
 	FindPhoto(int) (Complete_Photo, error)
 	FindPhotos(User) ([]Complete_Photo, error)
-	FindLikes(Photo_id) ([]User_id, error)
+	FindLikes(Photo_id) ([]User, error)
 	FindComments(Photo_id) ([]Comment, error)
 	FIndUser(User) (string, error)
 	PutLike(Photo_id, User) error

@@ -127,7 +127,6 @@ export default {
         
         this.userExists = true
         this.currentIsBanned = false
-        console.log(response)
         if (response.status === 206){
           this.banStatus = true
           return

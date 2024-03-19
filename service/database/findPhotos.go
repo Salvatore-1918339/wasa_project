@@ -38,7 +38,7 @@ func (db *appdbimpl) FindPhotos(user User) ([]Complete_Photo, error) {
 		photo.Comments = append(photo.Comments, comments...)
 
 		// ! Prendiamo i Like
-		var likes []User_id
+		var likes []User
 		likes, err = db.FindLikes(Photo_id{Photo_id: photo.Photo_id})
 		if err != nil {
 			return nil, err

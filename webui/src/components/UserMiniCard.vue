@@ -37,8 +37,8 @@ Questi stili includono la larghezza, il colore del testo, il bordo, e l'effetto 
                 <div class="left-banner">
                     <img src="../assets/images/user.png" alt="User" height="50"  style="position:absolute;right:-23px; padding-bottom: 4px;">
                 </div>
-                <div style="position: relative;">
-                    <h5 @click="clickedUser" class="" style="padding-top: 6px; font-weight: bold;font-size: 1.8em; position: absolute; left: -60px;">{{nickname}}</h5>
+                <div style="position: relative; width: auto;" >
+                    <h5 @click="clickedUser" class="" style="padding-top: 6px; font-weight: bold;font-size: 1.8em; position: center; left: -60px;">{{nickname}}</h5>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@ Questi stili includono la larghezza, il colore del testo, il bordo, e l'effetto 
 .user-mini-card{
     border: 2px solid black;
     color: black;
-    width: 25%;
+    width: 320px;
     transition: all 400ms ease-in-out;
 }
 

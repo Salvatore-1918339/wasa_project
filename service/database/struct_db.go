@@ -43,5 +43,5 @@ type Complete_Photo struct {
 	Owner     User      `json:"owner"`
 	Timestamp time.Time `json:"timestamp"`
 	Comments  []Comment `json:"comments"`
-	Likes     []User_id `json:"likes"`
+	Likes     []User    `json:"likes"`
 }
