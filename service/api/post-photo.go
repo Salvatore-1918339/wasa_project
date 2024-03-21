@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"image/jpeg"
+	"image/png"
 	"io"
 	"net/http"
 	"os"
@@ -54,7 +54,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Controllo il Formato della Foto
-	errFormatJpg := checkFormatJpg(io.NopCloser(bytes.NewBuffer(data))) // passo dei Bytes da consumare
+	errFormatJpg := checkFormatPng(io.NopCloser(bytes.NewBuffer(data))) // passo dei Bytes da consumare
 	if errFormatJpg != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		ctx.Logger.WithError(errFormatJpg).Error("photo-upload: Error not supported format")
@@ -78,7 +78,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	path := filepath.Join("/tmp", "media", ps.ByName("id"), "photos") // /tmp/media/:id/photos
 
 	// Creo un nuovo file dentro la cartella foto del Utente
-	outputFile, err := os.Create(filepath.Join(path, strPhotoId+".jpg"))
+	outputFile, err := os.Create(filepath.Join(path, strPhotoId+".png"))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		ctx.Logger.WithError(err).Error("photo-upload: error creating local photo file")
@@ -106,11 +106,11 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 }
 
-func checkFormatJpg(body io.ReadCloser) error {
+func checkFormatPng(body io.ReadCloser) error {
 	//Decode consuma body. Ecco perché inseriamo body e newReader
-	_, errJpg := jpeg.Decode(body)
-	if errJpg != nil {
-		return errJpg
+	_, errPng := png.Decode(body)
+	if errPng != nil {
+		return errPng
 	}
 	return nil
 }

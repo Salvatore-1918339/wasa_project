@@ -12,36 +12,14 @@ import SettingsView from '../views/SettingsView.vue'
 const router = createRouter({
     history: createWebHashHistory(
         import.meta.env.BASE_URL),
-    routes: [{
-            path: '/',
-            redirect: '/login'
-        },
-        {
-            path: '/login',
-            component: LoginView
-        },
-        {
-            path: '/home',
-            component: HomeView
-        },
-        {
-            path: '/search',
-            component: SearchView
-        },
-        {
-            path: '/Users/:id',
-            component: ProfileView
-
-        },
-        {
-            path: '/Users/:id/settings',
-            component: SettingsView
-
-        },
-        {
-            path: "/:catchAll(.*)",
-            component: PageNotFoundView
-        },
+    routes: [
+        {path: '/', redirect: '/home'},
+        {path: '/login',                component: LoginView},
+        {path: '/home',                 component: HomeView},
+        {path: '/search',               component: SearchView},
+        {path: '/Users/:id',            component: ProfileView},
+        {path: '/Users/:id/settings',   component: SettingsView},
+        {path: "/:catchAll(.*)",         component: PageNotFoundView},
     ]
 })
 

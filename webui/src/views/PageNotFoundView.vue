@@ -10,7 +10,7 @@ export default {
 
 <template>
 	<div class="pntf-text d-flex justify-content-center " >
-		<p>Spiacente! La pagina richiesta non esiste.</p>
+		<p>Pagina non trovata</p>
 	</div>
 </template>
 

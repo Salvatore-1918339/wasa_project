@@ -57,7 +57,7 @@ func (rt *_router) getPhoto(w http.ResponseWriter, r *http.Request, ps httproute
 		return
 	}
 
-	path := filepath.Join("/tmp", "media", ps.ByName("id"), "photos", photo_id_str+".jpg")
+	path := filepath.Join("/tmp", "media", ps.ByName("id"), "photos", photo_id_str+".png")
 
 	exist, err := rt.db.CheckPhoto(user_id, photo_id)
 	if err != nil {

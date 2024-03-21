@@ -104,7 +104,7 @@ gestire l'aggiunta di nuovi commenti e eliminare i commenti esistenti.
 			/>
 		  </div>
 		  <div class="modal-footer">
-    <textarea class="form-control" id="exampleFormControlTextarea1" 
+    <textarea class="form-control" :id="photo_id" 
      placeholder="Scrivi un commento" rows="1" maxLength="300" v-model="commentValue"></textarea>
     <button type="button" class="btn btn-primary" 
      @click.prevent="addComment" 

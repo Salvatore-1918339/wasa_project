@@ -14,7 +14,6 @@ export default {
     // Funzioni di controllo Booleani
     computed:{
         is_comment_author(){
-            console.log("check",this.author === +this.user, " sog:",this.author,":", +this.user)
             return this.author === +this.user
         },
         is_photo_author() {
