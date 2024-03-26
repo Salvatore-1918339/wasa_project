@@ -45,14 +45,17 @@ export default {
 					}
 				})
 
+				console.log("Commento:",response.data)
+
 				this.$emit('addComment',{
-					comment_id: response.data.comment_id, 
+					comment_identifier: response.data.comment_identifier, 
 					photo_id: this.photo_id, 
 					owner: response.data.owner,
 					comment_string: this.commentValue,
 					timestamp: response.data.timestamp,
 					},	
 				)
+				console.log("Comment list:",this.comments_list)
 				this.commentValue = ""
 				
 			}catch(e){
@@ -61,6 +64,7 @@ export default {
 		},
 
 		eliminateCommentToParent(value){
+			console.log("NOnno elimina:",value)
 			this.$emit('eliminateComment',value)
 		},
 
@@ -96,7 +100,7 @@ gestire l'aggiunta di nuovi commenti e eliminare i commenti esistenti.
 						  :key="comm.comment_identifier" 
 						  :author="comm.owner.user_id" 
 						  :username="comm.owner.nickname"
-						  :comment_id="comm.comment_identifier"
+						  :comment_identifier="comm.comment_identifier"
 						  :photo_id="comm.photo_id"
 						  :content="comm.comment_string"
 						  :photo_owner="photo_owner"

@@ -57,7 +57,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// Elimino la foto dalla directory
 	path := filepath.Join("/tmp", "media", ps.ByName("id"), "photos") // /tmp/media/:id/photos
-	filepath := filepath.Join(path, ps.ByName("photo_id")+".jpg")
+	filepath := filepath.Join(path, ps.ByName("photo_id")+".png")
 
 	err = os.Remove(filepath)
 	if err != nil {

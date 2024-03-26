@@ -119,7 +119,9 @@ func New(db *sql.DB) (AppDatabase, error) {
 					owner	INTEGER NOT NULL,
 					timestamp	DATETIME NOT NULL,
 					PRIMARY KEY(photo_id AUTOINCREMENT),
-					FOREIGN KEY(owner) REFERENCES Users ( user_id ));`
+					FOREIGN KEY(owner) REFERENCES Users ( user_id )
+					
+					);`
 
 		_, err = db.Exec(photos)
 		if err != nil {
@@ -131,7 +133,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 						owner	INTEGER NOT NULL,
 						txt	VARCHAR(300) NOT NULL,
 						timestamp	DATETIME NOT NULL,
-						FOREIGN KEY(photo_id) REFERENCES Photo (photo_id),
+						FOREIGN KEY(photo_id) REFERENCES Photo (photo_id) ON DELETE CASCADE,
 						FOREIGN KEY(owner) REFERENCES Users (user_id),
 						PRIMARY KEY(comment_id AUTOINCREMENT));`
 		_, err = db.Exec(comments)
@@ -169,7 +171,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 				photo_id INTEGER NOT NULL,	
 				user_id INTEGER NOT NULL,
 				PRIMARY KEY(photo_id, user_id),
-				FOREIGN KEY("photo_id") REFERENCES Photo (photo_id),
+				FOREIGN KEY("photo_id") REFERENCES Photo (photo_id) ON DELETE CASCADE,
 				FOREIGN KEY("user_id") REFERENCES Users (user_id));`
 		_, err = db.Exec(likes)
 		if err != nil {

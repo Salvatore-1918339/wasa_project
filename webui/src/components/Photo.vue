@@ -88,7 +88,7 @@ export default {
     	},
 
 		removeCommentFromList(value){
-			this.allComments = this.allComments.filter(item=> item.comment_id !== value)
+			this.allComments = this.allComments.filter(item=> item.comment_identifier !== value)
 		},
 
 		addCommentToList(comment){

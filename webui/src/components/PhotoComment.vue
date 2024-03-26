@@ -9,7 +9,7 @@ export default {
         }
     },
 
-	props: ['content','author','photo_owner','comment_id','photo_id','username'],
+	props: ['content','author','photo_owner','comment_identifier','photo_id','username'],
     
     // Funzioni di controllo Booleani
     computed:{
@@ -24,9 +24,9 @@ export default {
     methods:{
         async deleteComment(){
             try{
-                // Delete comment: "/users/:id/photos/:photo_id/comments/:comment_id"
-                await this.$axios.delete("/Users/"+this.photo_owner+"/Photos/"+this.photo_id+"/comments/"+this.comment_id)
-                this.$emit('eliminateComment',this.comment_id)
+                // Delete comment: "/users/:id/photos/:photo_id/comments/:comment_identifier"
+                await this.$axios.delete("/Users/"+this.photo_owner+"/Photos/"+this.photo_id+"/comments/"+this.comment_identifier)
+                this.$emit('eliminateComment',this.comment_identifier)
 
             }catch (e){
                 console.log(e.toString())
