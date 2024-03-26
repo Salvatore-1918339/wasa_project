@@ -33,12 +33,12 @@ Questi stili includono la larghezza, il colore del testo, il bordo, e l'effetto 
 
     <div class="row mb-2 mt-2" >
         <div class="col d-flex justify-content-center" style="margin-top: 5px; margin-bottom: 5px; height: 50px;border: 1px;">
-            <div class="user-mini-card card" style="display: flex; align-items: center; ">
+            <div @click="clickedUser" class="user-mini-card card" style="display: flex; align-items: center; ">
                 <div class="left-banner">
                     <img src="../assets/images/user.png" alt="User" height="50"  style="position:absolute;right:-23px; padding-bottom: 4px;">
                 </div>
                 <div style="position: relative; width: auto;" >
-                    <h5 @click="clickedUser" class="" style="padding-top: 6px; font-weight: bold;font-size: 1.8em; position: center; left: -60px;">{{nickname}}</h5>
+                    <h5  class="" style="padding-top: 6px; font-weight: bold;font-size: 1.8em; position: center; left: -60px;">{{nickname}}</h5>
                 </div>
             </div>
         </div>

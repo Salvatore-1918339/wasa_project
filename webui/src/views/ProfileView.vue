@@ -219,10 +219,10 @@ Ogni componente <Foto> visualizza una singola foto e le relative informazioni, c
   <div class="profile-posts-container">
     <h2 class="posts-header text-center">Post</h2>
 
-    <div style="padding-left: 150px; padding-right: 150px;">
+    <div v-if="sameUser" style="padding-left: 150px; padding-right: 150px;">
       <div class="input-photo"  style="">
         <input id="fileUploader" type="file" accept=".png" >
-        <button @click="uploadFile">Toccami</button>
+        <button @click="uploadFile">Upload</button>
       </div>
     </div>
     <hr class="posts-divider" />

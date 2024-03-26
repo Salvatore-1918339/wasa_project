@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -44,7 +45,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	// ! elimino la foto dal DB
 	err = rt.db.DeletePhoto(user_id, photo_id)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			ctx.Logger.WithError(err).Error("delete-photo: error deleting photo from DB - not found")
 			w.WriteHeader(http.StatusNotFound)
 			return

@@ -64,9 +64,6 @@ export default {
 		},
 
 		async toggleLike() {
-			if(this.isOwner){ 
-				return
-			}
 			const token = localStorage.getItem('token')
 			try{
 				if (!this.liked){
@@ -174,8 +171,8 @@ Il codice utilizza anche Bootstrap, un framework di design per lo sviluppo di si
                         <button class="btn btn-primary mr-3 button-commento d-flex align-items-center" 
 						data-bs-toggle="modal" :data-bs-target="'#comment_modal'+photo_id">
 
-            	            <i class="my-comment-color fa-regular fa-comment me-1" @click="commentClick"></i>
-                            <i class="my-comment-color-2"> {{allComments != null ? allComments.length : 0}}</i>
+            	        <i class="my-comment-color fa-regular fa-comment me-1"></i>
+                        <i class="my-comment-color-2"> {{allComments != null ? allComments.length : 0}}</i>
 
                         </button>
 					</div>

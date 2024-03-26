@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -33,7 +34,7 @@ func (rt *_router) doLoginHandler(w http.ResponseWriter, r *http.Request, ps htt
 
 	// ! Controlla che l'utente esista
 	temp_user, err := rt.db.CheckUser(user.toDataBase())
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		ctx.Logger.WithError(err).Error("session: Error in CheckUser")
 		w.WriteHeader(http.StatusInternalServerError)
 		return

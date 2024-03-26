@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -21,8 +20,6 @@ import (
 func (rt *_router) searchUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
 	queryStr := r.URL.Query().Get("user_query_id") // Prendo il Nickname
-
-	fmt.Print("QueryStr: ", queryStr)
 
 	// ! Controllo che abbia fatto l'accesso
 	identifier_str, err := extractBearerToken(r, w)
