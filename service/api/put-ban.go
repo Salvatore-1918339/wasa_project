@@ -62,9 +62,20 @@ func (rt *_router) putBan(w http.ResponseWriter, r *http.Request, ps httprouter.
 		User{User_id: user_id}.toDataBase())
 
 	if err != nil {
-		ctx.Logger.WithError(err).Error("putBan: error executing the unfollow query")
+		ctx.Logger.WithError(err).Error("putBan: error executing the unfollow query 1")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	err = rt.db.UnFollowUser(
+		User{User_id: user_id}.toDataBase(),
+		User{User_id: banner}.toDataBase())
+
+	if err != nil {
+		ctx.Logger.WithError(err).Error("putBan: error executing the unfollow query 2")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusNoContent)
 }
