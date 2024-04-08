@@ -138,7 +138,7 @@ export default {
         this.followerCnt = response.data.n_follower
         this.followingCnt = response.data.n_following
         this.postCnt = response.data.posts != null ? response.data.posts.length : 0
-        this.followStatus = response.data.followers != null ? response.data.followers.find(obj => obj.user_id === localStorage.getItem('token')) : false
+        this.followStatus = response.data.followers != null ? response.data.followers.find(obj => obj === +localStorage.getItem('token')) : false
         this.photos = response.data.posts != null ? response.data.posts : []
         this.followers = response.data.followers != null ? response.data.followers : []
 
