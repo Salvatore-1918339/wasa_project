@@ -20,7 +20,7 @@
         <div class="col d-flex justify-content-center" style="margin-top: 1px; margin-bottom: 1px; height: 30px;">
             <div class="like-card card">
                 <div style="position: relative; width: auto;" >
-                    <h5 class="User-nickname" @click="clickedUser" style="padding-top: 6px;font-weight: bold;font-size: 1.8em; margin-left: -230px;">{{nickname}}</h5>
+                    <h5 data-bs-dismiss="modal" class="User-nickname" @click="clickedUser" style="padding-top: 6px;font-weight: bold;font-size: 1.8em; margin-left: -230px;">{{nickname}}</h5>
                 </div>
             </div>
         </div>
