@@ -44,10 +44,19 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if banned {
-		ctx.Logger.WithError(errors.New("l'utente è bloccato")).Error("get-profile: Impossibile eseguire l'operazione")
-		w.WriteHeader(http.StatusPartialContent)
+
+	// controllose l'ho bannata
+	banned_2, err := rt.db.CheckBan(
+		User{User_id: requestingUserId}.toDataBase(),
+		User{User_id: user_id}.toDataBase())
+	if err != nil {
+		ctx.Logger.WithError(err).Error("get-UserProfile: Error")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
+	}
+
+	if banned_2 {
+		w.WriteHeader(http.StatusForbidden)
 	}
 
 	// ! Getnickname
@@ -58,6 +67,14 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		return
 	}
 	profile.Nickname = nickname
+
+	if banned {
+		ctx.Logger.WithError(errors.New("l'utente è bloccato")).Error("get-profile: Impossibile eseguire l'operazione")
+		w.WriteHeader(http.StatusPartialContent)
+		// manda l'output all'utente.
+		_ = json.NewEncoder(w).Encode(profile)
+		return
+	}
 
 	// ! Followers of the Users
 	follower, err := rt.db.GetFollower(User{User_id: user_id}.toDataBase())

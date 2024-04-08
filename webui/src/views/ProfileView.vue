@@ -127,14 +127,21 @@ export default {
         this.userExists = true
         this.currentIsBanned = false
         if (response.status === 206) {
+          console.log("Bannato!")
           this.banStatus = true
-          return
         }
         if (response.status === 204) {
           this.userExists = false
         }
         this.nickname = response.data.nickname
         this.user_id = response.data.user_id
+
+        if (this.banStatus == true) {
+          console.log(this.nickname)
+          console.log(this.user_id)
+          return
+        }
+
         this.followerCnt = response.data.n_follower
         this.followingCnt = response.data.n_following
         this.postCnt = response.data.posts != null ? response.data.posts.length : 0
@@ -145,6 +152,8 @@ export default {
 
       } catch (e) {
         this.currentIsBanned = true
+        this.$router.replace('/notFound')
+        return
       }
     },
 
