@@ -19,8 +19,7 @@ const router = createRouter({
         {path: '/search',               component: SearchView},
         {path: '/Users/:id',            component: ProfileView},
         {path: '/Users/:id/settings',   component: SettingsView},
-        {path: '/notFound',             component: PageNotFoundView},
-        {path: "/:catchAll(.*)",        component: PageNotFoundView},
+        {path: "/:catchAll(.*)",         component: PageNotFoundView},
     ]
 })
 
