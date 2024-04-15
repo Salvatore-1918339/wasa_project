@@ -1,22 +1,5 @@
 <script>
-/**
 
-Questo codice è un componente Vue.js che visualizza il profilo di un utente. 
-Ha una serie di proprietà come nickname, followStatus, followerCnt, followingCnt, postCnt, photos, following, followers ecc.,
-e metodi come uploadFile, followClick, banClick, loadInfo.
-
-Il componente utilizza la libreria Axios per interagire con un'API back-end per recuperare e aggiornare i dati. 
-Ad esempio, il metodo followClick invia una richiesta PUT all'API per seguire l'utente o
-una richiesta DELETE per smettere di seguire l'utente. 
-Il metodo banClick invia una richiesta PUT per escludere l'utente o una richiesta DELETE per sbloccare l'utente.
-Il metodo loadInfo recupera i dati del profilo dell'utente dall'API e aggiorna le proprietà del componente di conseguenza. 
-Il metodo uploadFile consente all'utente di caricare una foto.
-
-La proprietà calcolata currentPath restituisce l'id dell'utente dall'oggetto $route. 
-La proprietà calcolata sameUser controlla se l'id dell'utente visualizzato è lo stesso dell'utente attualmente connesso. 
-La proprietà watch controlla le modifiche nella proprietà currentPath e chiama il metodo loadInfo quando viene rilevata una modifica.
-
- */
 export default {
   data: function () {
     return {
@@ -66,13 +49,11 @@ export default {
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);
       reader.onload = async () => {
-        // Post photo: /Users/:id/Photos
         let response = await this.$axios.post("/Users/" + this.$route.params.id + "/photos", reader.result, {
           headers: {
             'Content-Type': file.type
           },
         });
-        //this.photos.append(response.data)
         this.postCnt += 1
 
         let response2 = await this.$axios.get("/Users/" + this.$route.params.id);
@@ -83,11 +64,9 @@ export default {
     async followClick() {
       try {
         if (this.followStatus) {
-          // Delete follow: /users/:id/followers/:follower_id
           await this.$axios.delete("/Users/" + localStorage.getItem('token') + "/followers/" + this.$route.params.id);
           this.followerCnt -= 1
         } else {
-          // Put follow: /users/:id/followers/:follower_id
           await this.$axios.put("/Users/" + localStorage.getItem('token') + "/followers/" + this.$route.params.id);
           this.followerCnt += 1
         }
@@ -101,11 +80,9 @@ export default {
     async banClick() {
       try {
         if (this.banStatus) {
-          // Delete ban: /users/:id/banned_users/:banned_id
           await this.$axios.delete("/Users/" + localStorage.getItem('token') + "/banned_users/" + this.$route.params.id);
           this.loadInfo()
         } else {
-          // Put ban: /users/:id/banned_users/:banned_id
           await this.$axios.put("/Users/" + localStorage.getItem('token') + "/banned_users/" + this.$route.params.id);
           this.followStatus = false
         }
@@ -120,7 +97,6 @@ export default {
         return
       }
       try {
-        // Get user profile: /Users/:id
         let response = await this.$axios.get("/Users/" + this.$route.params.id);
         this.banStatus = false
 
@@ -166,24 +142,7 @@ export default {
 }
 </script>
 
-<!--
-  
-È un singolo componente di file che visualizza le informazioni sul profilo di un utente, inclusi il nome utente, il numero di post,
-il numero di follower e il numero di account che stanno seguendo.
-Ha una sezione di intestazione che include il nome utente del profilo visualizzato e pulsanti per seguire/smettere di seguire 
-e bloccare/sbloccare l'utente. Se l'utente corrente che sta visualizzando il profilo è lo stesso del profilo visualizzato, 
-vedrà un'icona a forma di ingranaggio per accedere alle proprie impostazioni anziché i pulsanti Segui/Blocca.
 
-La scheda profilo mostra le statistiche (conteggio post, conteggio follower, conteggio follower) del profilo solo se l'utente 
-non è stato bannato.
-
-Il profilo ha anche una sezione per visualizzare i post dell'utente, che è suddivisa in un'intestazione, un pulsante "Aggiungi" 
-(se l'utente corrente è il proprietario del profilo) e l'elenco dei post. 
-Se l'utente viene bannato viene visualizzato il messaggio "Non c'è ancora alcun post". 
-Se l'utente ha post, viene visualizzata una griglia di componenti <Photo>. 
-Ogni componente <Foto> visualizza una singola foto e le relative informazioni, come il numero di Mi piace e commenti.
-
--->
 
 <template>
 

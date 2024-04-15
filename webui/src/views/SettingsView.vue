@@ -1,12 +1,5 @@
 <script>
-/**
- * Questo codice rappresenta un componente Vue.js che modifica lo username di un utente.
- * Il componente ha una proprietà chiamata "username" che rappresenta lo username da modificare. 
- * Il componente ha anche un metodo chiamato "modifyusername" che effettua una richiesta PUT all'indirizzo "/users/:id" passando
- * come parametro il nuovo username. 
- * Se la richiesta ha successo, il metodo resetta il valore della proprietà "username".
- * In caso di errore, viene salvato un messaggio di errore nella proprietà "errormsg".
- */
+
  export default {
 	data: function () {
 		return {
@@ -26,7 +19,6 @@
 				return
 			}
 			try{
-				// Get user profile info: /Users/:id
 				let response = await this.$axios.get("/Users/"+this.$route.params.id);
 				this.old_nickname = response.data.nickname
 
@@ -38,7 +30,6 @@
 		async modifyNickname(){
 			try{
 				this.temp_nickname = this.nickname
-				// Nickname put: /Users/:id
 				let resp = await this.$axios.put("/Users/"+this.$route.params.id,{
 					nickname: this.nickname,
 				})
@@ -66,19 +57,6 @@
 }
 </script>
 
-<!--
-Questo codice è un modello Vue.js che implementa una pagina "Impostazioni utente".
-La pagina visualizza l'ID dell'utente corrente, che viene passato come parametro all'URL. 
-Il codice consente all'utente di modificare il proprio username, che è la parte dell'identificatore dell'utente prima della @.
-
-Il codice utilizza un input di testo v-model per acquisire il nuovo username dell'utente e un pulsante per inviare 
-la richiesta di modifica. 
-La funzione modifyusername viene eseguita quando viene fatto clic sul pulsante. 
-L'anteprima del nuovo identificatore dell'utente viene visualizzata sotto l'input di testo.
-Il codice utilizza anche un componente ErrorMsg per visualizzare eventuali messaggi di errore durante la modifica dell'username.
-
-Infine, il codice utilizza stili CSS per formattare la pagina e rendere il testo più leggibile.
--->
 
 <template>
 	<div class="container-fluid p-5" style="padding-top: 150px;">

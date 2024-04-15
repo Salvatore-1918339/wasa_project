@@ -1,17 +1,5 @@
 <script>
-/**
-  Questo script rappresenta un componente Vue.js che rappresenta una foto su una piattaforma di condivisione di foto.
-  Il componente utilizza il framework Axios per gestire le richieste HTTP verso un'API per ottenere i dettagli della foto,
-  gestire i like e i commenti e gestire la cancellazione della foto.
 
-  La foto viene caricata tramite la chiamata alla funzione loadPhoto() che recupera l'URL della foto dall'API.
-  La funzione deletePhoto() elimina la foto dall'API. 
-  La funzione toggleLike() gestisce il tocco del pulsante "mi piace" e la rimozione/aggiunta di un like alla foto. 
-  La funzione photoOwnerClick() gestisce il clic sul proprietario della foto e reindirizza l'utente alla pagina del proprietario.
-
-  Il componente ha anche metodi per gestire la visualizzazione dei commenti, come removeCommentFromList e addCommentToList, 
-  che rimuovono o aggiungono un commento all'elenco dei commenti visualizzati.
- */
 export default {
 	data(){
 		return{
@@ -27,8 +15,10 @@ export default {
 
 	methods:{
 		loadPhoto(){
-			// Get photo : "/users/:id/photos/:photo_id"
+			// GET - URL Photo
 			this.photoURL = __API_URL__+ "/Users/"+this.owner+"/Photos/"+this.photo_id 
+
+			// GESTIONE DELLA DATA -- VALORE AGGIORNATO 
 			this.date = new Date(this.upload_date);
             var giorno = this.date.getDate();
             var diff = new Date() - this.date;
@@ -46,13 +36,13 @@ export default {
                     this.date = minPassati + " min fa"
                 }
             }
+			
 		},
 
 		async deletePhoto(){
+			// Elimina la photo
 			try{
-				// Delete photo: /users/:id/photos/:photo_id
 				await this.$axios.delete("/Users/"+this.owner+"/Photos/"+this.photo_id)
-				// location.reload()
 				this.$emit("removePhoto",this.photo_id)
 			}catch(e){
 				//
@@ -68,14 +58,12 @@ export default {
 			try{
 				if (!this.liked){
 
-					// Put like: /Users/:id/Photos/:photo_id/Likes"
 					await this.$axios.put("/Users/"+ this.owner +"/Photos/"+this.photo_id+"/Likes")
 					this.allLikes.push({
 						user_id: token,
 						nickname: localStorage.getItem('nickname')
 					})
 				}else{
-					// Delete like: /Users/:id/Photos/:photo_id/Likes/:like_id"
 					await this.$axios.delete("/Users/"+ this.owner  +"/Photos/"+this.photo_id+"/Likes/"+ token)
 					this.allLikes.pop()
 				}
@@ -101,12 +89,10 @@ export default {
 	async mounted(){
 		await this.loadPhoto()
 
-		// Se nel likes passato dal padre c'è qualcosa allora copio i suoi mi piace
 		if (this.likes != null){
 			this.allLikes = this.likes
 		}
 
-		// Funzione che non funziona. Controlla se sono io ad aver messo il mi piace. e setta il bool liked 
 		if (this.likes != null){
 			this.liked = this.allLikes.some(obj => obj.user_id === +localStorage.getItem('token')) // + serve a convertire il valore in int
 		}
@@ -119,15 +105,7 @@ export default {
 }
 </script>
 
-<!--
-Il modello viene utilizzato per mostrare una foto con alcune informazioni relative a essa, come il proprietario, 
-la data di caricamento e il numero di commenti e mi piace. Gli utenti possono anche lasciare un commento o mettere un mi piace
-sulla foto. Il codice utilizza anche due moduli modali, uno per i commenti e uno per i "mi piace".
 
-Il codice utilizza VueJS, un framework JavaScript per la creazione di interfacce utente, per implementare le funzionalità interattive
-come la possibilità di commentare e mettere un mi piace sulla foto. 
-Il codice utilizza anche Bootstrap, un framework di design per lo sviluppo di siti web, per la realizzazione dei moduli modali.
--->
 
 <template>
 	<div class="container-fluid mt-3 mb-5">

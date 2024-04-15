@@ -1,20 +1,6 @@
 <script>
 
-/**
-   Questo script rappresenta un componente Vue.js che viene utilizzato per la barra di navigazione dell'applicazione.
-   La barra di navigazione contiene funzionalità come la ricerca, il logout, la visualizzazione del profilo personale, 
-   e la navigazione verso la home page.
 
-   Il componente utilizza una serie di metodi che gestiscono i click sui pulsanti e sulle icone presenti nella barra di navigazione. 
-   Ad esempio, il metodo logout rimuove il token dalla memoria locale del browser, 
-   il metodo goBackHome emette un evento che richiede di visualizzare la home page, 
-   il metodo searchFunc emette un evento che richiede la ricerca di elementi sul sito, 
-   il metodo myProfile emette un evento che richiede la visualizzazione del profilo personale, e così via.
-
-  Inoltre, il componente utilizza anche alcune proprietà di dati come textVar, che memorizza il testo inserito nella barra di ricerca,
-  e iconProfile, che memorizza lo stato dell'icona del profilo (attivo o inattivo). 
-  Questi dati sono utilizzati per gestire l'interfaccia utente e renderla dinamica in base alle azioni dell'utente.
- */
 export default {
   data(){
     return{
@@ -38,21 +24,11 @@ export default {
     myProfile(){
       this.$emit('requestUpdateView',"/Users/"+localStorage.getItem('token'))
     },
-    profileIconInactive(){
-      this.iconProfile = "fa-regular"
-    },
-    profileIconActive(){
-      this.iconProfile = "fa-solid"
-    },
   },
 }
 </script>
 
-<!--
-Questo codice definisce un componente di navigazione per un'applicazione web. Il componente visualizza una barra di navigazione
-con un pulsante "Home" a sinistra, una casella di testo di ricerca al centro e due pulsanti "Profilo" e "Esci" a destra.
-Il componente utilizza anche lo stile CSS per definire l'aspetto dei componenti.
--->
+
 
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-custom">

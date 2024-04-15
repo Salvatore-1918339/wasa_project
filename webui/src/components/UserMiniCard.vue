@@ -1,12 +1,5 @@
 <script>
-/**
-  Questo codice rappresenta un componente Vue.js che fornisce una funzionalità di navigazione all'interno dell'applicazione.
-  Il componente ha una proprietà di input chiamata "identifier" e "username".
 
-  Nel metodo "clickedUser", il componente emette un evento "clickedUser" passando "identifier" come payload. 
-  Questo evento potrebbe essere utilizzato da un componente padre per gestire la navigazione alla pagina del profilo dell'utente
-  con l'identificativo specificato.
- */
  export default {
 	props: ['identifier','nickname'],
 
@@ -19,15 +12,7 @@
 }
 </script>
 
-<!-- 
-Questo codice presenta una componente Vue.js che mostra una "scheda mini utente". 
-La scheda è costituita da un div con una classe CSS che lo formatta come una "card". La scheda mostra il nome utente e 
-un identificatore. Se si clicca sul nome utente, viene attivata un'azione tramite la funzione "clickedUser". 
-La funzione è legata all'evento "click" del nome utente.
 
-Inoltre, il codice include anche una sezione di stile CSS che formatta l'aspetto della scheda. 
-Questi stili includono la larghezza, il colore del testo, il bordo, e l'effetto al passaggio del mouse sul nome utente.
--->
 
 <template>
 

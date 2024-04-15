@@ -101,6 +101,9 @@ components:
 
     bad_request:
       description: richiesta inviata al server è sintatticamente errata
+    
+    partial_content:
+      description: richiesta inviata al server correttamente ma viene tornata solo parte della risposta
 
   parameters:
     #ID_UTENTE
@@ -498,6 +501,8 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/profile_found"
+        "206":
+          $ref: "#/components/responses/partial_content"
         "400":
           $ref: "#/components/responses/bad_request"
         "403":

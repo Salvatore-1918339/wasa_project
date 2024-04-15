@@ -1,18 +1,5 @@
 <script>
-/**
 
-Ha alcuni dati, tra cui un messaggio di errore, un identificatore di utente e un flag per l'abilitazione o meno del pulsante di login. 
-C'è anche un metodo login che viene chiamato quando l'utente fa clic sul pulsante di login.
-
-La funzione login effettua una richiesta HTTP POST a "/session" con l'identificatore dell'utente.
-Se la richiesta riesce, il token dell'utente viene memorizzato nel local storage e l'utente viene reindirizzato alla pagina "home". 
-Se c'è un errore nella richiesta, il messaggio di errore viene memorizzato nella proprietà errormsg.
-
-Quando il componente viene montato, viene controllato se esiste un token nell'local storage.
-Se esiste, l'utente viene reindirizzato alla pagina "home". 
-Questo è per garantire che l'utente non possa tornare alla schermata di login se è già loggato.
-
- */
 export default {
 	data: function() {
 		return {
@@ -23,10 +10,8 @@ export default {
 	},
 	methods: {
 		async login() {
-			// this.loading = true;
 			this.errormsg = null;
 			try {
-				// Login (POST): "/session"
 				let response = await this.$axios.post("/session", {
                     nickname: this.nickname.trim()
                 });
@@ -40,12 +25,12 @@ export default {
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
-			// this.loading = false;
 		},
 	},
 	mounted(){
 		localStorage.removeItem('token')
       	localStorage.removeItem('nickname')
+		
 		if (localStorage.getItem('token')){
 			this.$router.replace("/home")
 		}
@@ -54,12 +39,7 @@ export default {
 }
 </script>
 
-<!--
-Questo codice è un modello HTML/CSS/JS che rappresenta una pagina di login. 
-La pagina di login consiste di una semplice form che accetta un input di testo "Username" e ha un pulsante "Accedi" che, 
-una volta premuto, esegue un'azione "login". La pagina di login include anche un logo e un titolo per l'applicazione. 
-La forma viene stilizzata utilizzando CSS per creare un'interfaccia utente.
--->
+
 
 <template>
 	

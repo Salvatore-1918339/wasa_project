@@ -10,13 +10,11 @@ export default {
 
 <template>
 	<div class="pntf-text d-flex justify-content-center " >
-		<p>Pagina non trovata</p>
+		<p style="padding-top: 50px; color: black !important; margin-top: 50px;" >Pagina non trovata</p>
 	</div>
 </template>
 
 <style>
 
-.pntf-text{
-	color: white;
-}
+
 </style>

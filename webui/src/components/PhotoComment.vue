@@ -1,7 +1,5 @@
 <script>
-/**
 
- */
 export default {
     data(){
         return {
@@ -24,7 +22,6 @@ export default {
     methods:{
         async deleteComment(){
             try{
-                // Delete comment: "/users/:id/photos/:photo_id/comments/:comment_identifier"
                 await this.$axios.delete("/Users/"+this.photo_owner+"/Photos/"+this.photo_id+"/comments/"+this.comment_identifier)
                 this.$emit('eliminateComment',this.comment_identifier)
 
@@ -40,10 +37,6 @@ export default {
 
 }
 </script>
-
-<!--
-
--->
 
 <template>
 	<div class="container-fluid" style="padding-bottom: 5px;">
